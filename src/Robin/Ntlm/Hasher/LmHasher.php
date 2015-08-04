@@ -126,7 +126,7 @@ class LmHasher implements HasherInterface
 
         $halves = str_split($string_password, static::PASSWORD_SLICE_LENGTH);
 
-        // Encrpyt each half
+        // Encrypt and concatenate each half
         $binary_hash = array_reduce(
             $halves,
             function ($result, $half) {
@@ -159,7 +159,7 @@ class LmHasher implements HasherInterface
         $byte_array_64 = new SplFixedArray(8);
         $key_64bit = '';
 
-        // Get the byte value of each ascii character in the string
+        // Get the byte value of each ASCII character in the string
         for ($i = 0; $i < $byte_array_56->getSize(); $i++) {
             $byte_array_56[$i] = isset($string_key[$i]) ? ord($string_key[$i]) : 0;
         }
