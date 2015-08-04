@@ -11,7 +11,7 @@ namespace Robin\Ntlm\Crypt\Des;
 use Robin\Ntlm\Crypt\CipherMode;
 
 /**
- * An engine used to encrypt data using the DES standard standard algorithm.
+ * An engine used to encrypt data using the DES standard algorithm.
  */
 interface DesEncrypterInterface
 {

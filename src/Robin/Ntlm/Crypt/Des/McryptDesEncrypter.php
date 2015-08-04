@@ -12,7 +12,7 @@ use Robin\Ntlm\Crypt\CipherMode;
 use UnexpectedValueException;
 
 /**
- * An engine used to encrypt data using the DES standard standard algorithm and
+ * An engine used to encrypt data using the DES standard algorithm and
  * implemented using the PHP "mcrypt" extension.
  *
  * @link http://php.net/mcrypt
