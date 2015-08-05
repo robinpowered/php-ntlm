@@ -11,17 +11,26 @@ namespace Robin\Ntlm\Crypt\Hasher;
 use UnexpectedValueException;
 
 /**
- * A base for a cryptographic hasher implemented using PHP's built-in hashing
- * mechanisms as part of the "hash" extension (`ext-hash`).
+ * A cryptographic hasher implemented using PHP's built-in hashing mechanisms as
+ * part of the "hash" extension (`ext-hash`).
  *
  * @link http://php.net/manual/en/ref.hash.php
  */
-abstract class AbstractHasher implements HasherInterface
+class TypedHasher implements TypedHasherInterface
 {
 
     /**
      * Properties
      */
+
+    /**
+     * The algorithm used.
+     *
+     * Maps to a {@link HasherAlgorithm} value.
+     *
+     * @type string
+     */
+    private $algorithm;
 
     /**
      * The incremental hashing context.
@@ -39,17 +48,17 @@ abstract class AbstractHasher implements HasherInterface
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($algorithm)
     {
-        $algorithm = $this->getAlgorithmIdentifier();
+        $this->algorithm = $algorithm;
 
-        $context = hash_init($algorithm);
+        $context = hash_init($this->algorithm);
 
         if (false === $context) {
             throw new UnexpectedValueException(
                 sprintf(
-                    'Unable to initialize hashing context. Your system might not currently support the %s algorithm',
-                    $algorithm
+                    'Unable to initialize hashing context. Your system might not currently support the "%s" algorithm.',
+                    $this->algorithm
                 )
             );
         }
@@ -76,10 +85,10 @@ abstract class AbstractHasher implements HasherInterface
     }
 
     /**
-     * Get the string identifier of the algorithm used by PHP's hash extension.
-     *
-     * @link http://php.net/manual/en/function.hash-algos.php
-     * @return string
+     * {@inheritDoc}
      */
-    abstract protected function getAlgorithmIdentifier();
+    public function getAlgorithm()
+    {
+        return $this->algorithm;
+    }
 }
