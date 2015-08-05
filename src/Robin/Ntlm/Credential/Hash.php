@@ -47,7 +47,7 @@ class Hash implements HashCredentialInterface
      *
      * @param string $binary_hash The raw binary string representation.
      * @param int $type The {@link HashType type} of hash being represented.
-     * @return static
+     * @return self
      */
     public static function fromBinaryString($binary_hash, $type)
     {
@@ -59,7 +59,7 @@ class Hash implements HashCredentialInterface
      *
      * @param string $hex_binary_hash The hex binary string representation.
      * @param int $type The {@link HashType type} of hash being represented.
-     * @return static
+     * @return self
      */
     public static function fromHexBinaryString($hex_binary_hash, $type)
     {
