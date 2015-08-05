@@ -140,6 +140,8 @@ class LmHasher implements HasherInterface
                     CipherMode::ECB,
                     $this->random_byte_generator->generate(static::RANDOM_BINARY_STRING_LENGTH)
                 );
+
+                return $result;
             },
             ''
         );
