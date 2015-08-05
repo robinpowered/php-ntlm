@@ -114,7 +114,9 @@ class LmHasher implements HasherInterface
     /**
      * {@inheritDoc}
      *
-     * @todo: Find out if unicode needs to be considered, and then use the `mb_` functions.
+     * NOTE: String operations are intentionally not "Unicode-aware", as the
+     * LM Hash encryption algorithm is intended to operate on raw "bytes",
+     * regardless of the byte-width of the character's encoding.
      */
     public function hash(Password $password)
     {
