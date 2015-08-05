@@ -51,7 +51,7 @@ class Hash implements HashCredentialInterface
      */
     public static function fromBinaryString($binary_hash, $type)
     {
-        return new static($binary_hash, $type);
+        return new self($binary_hash, $type);
     }
 
     /**
