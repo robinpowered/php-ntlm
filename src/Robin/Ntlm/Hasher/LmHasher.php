@@ -176,7 +176,7 @@ class LmHasher implements HasherInterface
         $byte_array_64[7] = $byte_array_56[6] << 1;
 
         foreach ($byte_array_64 as $byte_val) {
-            $key_64bit = chr($byte_val);
+            $key_64bit .= chr($byte_val);
         }
 
         return $key_64bit;
