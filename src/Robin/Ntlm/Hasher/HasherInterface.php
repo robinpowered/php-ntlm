@@ -13,6 +13,9 @@ use Robin\Ntlm\Credential\Password;
 
 /**
  * Hashes a {@link Password} credential into a {@link HashCredentialInterface}.
+ *
+ * Not to be confused with the
+ * {@link \Robin\Ntlm\Crypt\Hasher\HasherInterface cryptographic hasher}
  */
 interface HasherInterface
 {
