@@ -134,14 +134,12 @@ class LmHasher implements HasherInterface
             function ($result, $half) {
                 $expanded = static::expand56BitKeyTo64BitKey($half);
 
-                $result .= $this->des_encrypter->encrypt(
+                return $result . $this->des_encrypter->encrypt(
                     $expanded,
                     static::ENCRYPT_DATA_CONSTANT,
                     CipherMode::ECB,
                     $this->random_byte_generator->generate(static::RANDOM_BINARY_STRING_LENGTH)
                 );
-
-                return $result;
             },
             ''
         );
