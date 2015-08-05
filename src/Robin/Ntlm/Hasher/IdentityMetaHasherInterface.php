@@ -19,7 +19,7 @@ interface IdentityMetaHasherInterface
 {
 
     /**
-     * Hash a given {@link Password} into a {@link HashCredentialInterface}.
+     * Hashes a given {@link Password} into a {@link HashCredentialInterface}.
      *
      * @param Password $password The password to hash.
      * @param string $username The user's "username".

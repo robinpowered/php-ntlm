@@ -15,7 +15,7 @@ interface EncodingConverterInterface
 {
 
     /**
-     * Convert a string's character encoding.
+     * Converts a string's character encoding.
      *
      * @param string $string The string to convert the encoding of.
      * @param string $to_encoding The desired encoding of the resulting string.

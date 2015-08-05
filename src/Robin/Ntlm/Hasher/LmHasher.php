@@ -150,7 +150,7 @@ class LmHasher implements HasherInterface
     }
 
     /**
-     * Expand a 56-bit key to a full 64-bit key for DES encryption.
+     * Expands a 56-bit key to a full 64-bit key for DES encryption.
      *
      * @link http://php.net/manual/en/ref.hash.php#84587 Implementation basis.
      * @link https://github.com/jclulow/node-smbhash/blob/edc48e2b93067/lib/common.js Inspired by Joshua Clulow's work.

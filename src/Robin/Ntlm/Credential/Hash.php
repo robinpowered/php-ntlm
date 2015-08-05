@@ -43,7 +43,7 @@ class Hash implements HashCredentialInterface
      */
 
     /**
-     * Construct a hash from a raw binary string.
+     * Constructs a hash from a raw binary string.
      *
      * @param string $binary_hash The raw binary string representation.
      * @param int $type The {@link HashType type} of hash being represented.
@@ -55,7 +55,7 @@ class Hash implements HashCredentialInterface
     }
 
     /**
-     * Construct a hash from a hexadecimally encoded binary string.
+     * Constructs a hash from a hexadecimally encoded binary string.
      *
      * @param string $hex_binary_hash The hex binary string representation.
      * @param int $type The {@link HashType type} of hash being represented.
