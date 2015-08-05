@@ -26,7 +26,7 @@ interface DesEncrypterInterface
      * @param int $mode The {@link CipherMode cipher mode} of operation.
      * @param string $initialization_vector The initialization vector used to
      *   encrypt the data in an unpredictable or reproducable fashion.
-     * @return string The encrypted data.
+     * @return string The encrypted data as a binary string.
      */
     public function encrypt($key, $data, $mode, $initialization_vector);
 }
