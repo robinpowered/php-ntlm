@@ -17,7 +17,7 @@ namespace Robin\Ntlm\Crypt\Hasher;
  * @link https://en.wikipedia.org/wiki/Hash-based_message_authentication_code
  * @link http://php.net/manual/en/ref.hash.php
  */
-class HmacHasher extends TypedHasher
+class HmacHasher extends AbstractTypedHasher
 {
 
     /**
@@ -29,10 +29,8 @@ class HmacHasher extends TypedHasher
      */
     public function __construct($algorithm, $key)
     {
-        $this->algorithm = $algorithm;
+        $context = hash_init($algorithm, HASH_HMAC, $key);
 
-        $context = hash_init($this->algorithm, HASH_HMAC, $key);
-
-        $this->context = $this->validateHashContext($context);
+        parent::__construct($context, $algorithm);
     }
 }
