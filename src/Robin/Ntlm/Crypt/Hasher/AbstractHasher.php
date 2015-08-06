@@ -73,7 +73,16 @@ abstract class AbstractHasher implements HasherInterface
      */
     public function digest()
     {
-        return hash_final($this->context, true);
+        // Copy the context so we can keep using the hasher
+        $context_copy = hash_copy($this->context);
+
+        // Calculate the digest
+        $digest = hash_final($this->context, true);
+
+        // Set our context to the copied one, since the old one is now finalized
+        $this->context = $context_copy;
+
+        return $digest;
     }
 
     /**
