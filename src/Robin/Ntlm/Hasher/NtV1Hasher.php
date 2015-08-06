@@ -25,7 +25,7 @@ use Robin\Ntlm\Encoding\EncodingConverterInterface;
  * @link http://download.microsoft.com/download/9/5/E/95EF66AF-9026-4BB0-A41D-A4F81802D92C/[MS-NLMP].pdf
  * @link https://msdn.microsoft.com/en-us/library/cc236699.aspx
  */
-class Nt1Hasher implements HasherInterface
+class NtV1Hasher implements HasherInterface
 {
 
     /**
