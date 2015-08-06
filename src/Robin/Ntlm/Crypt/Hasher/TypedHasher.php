@@ -20,6 +20,18 @@ class TypedHasher implements TypedHasherInterface
 {
 
     /**
+     * Constants
+     */
+
+    /**
+     * The "resource" type of a PHP hash context.
+     *
+     * @type string
+     */
+    const HASH_CONTEXT_RESOURCE_TYPE = 'Hash Context';
+
+
+    /**
      * Properties
      */
 
@@ -30,7 +42,7 @@ class TypedHasher implements TypedHasherInterface
      *
      * @type string
      */
-    private $algorithm;
+    protected $algorithm;
 
     /**
      * The incremental hashing context.
@@ -38,7 +50,7 @@ class TypedHasher implements TypedHasherInterface
      * @link http://php.net/manual/en/hash.resources.php
      * @type resource
      */
-    private $context;
+    protected $context;
 
 
     /**
@@ -47,6 +59,8 @@ class TypedHasher implements TypedHasherInterface
 
     /**
      * Constructor
+     *
+     * @param string $algorithm The {@link HasherAlgorithm} to use.
      */
     public function __construct($algorithm)
     {
@@ -54,16 +68,7 @@ class TypedHasher implements TypedHasherInterface
 
         $context = hash_init($this->algorithm);
 
-        if (false === $context) {
-            throw new UnexpectedValueException(
-                sprintf(
-                    'Unable to initialize hashing context. Your system might not currently support the "%s" algorithm.',
-                    $this->algorithm
-                )
-            );
-        }
-
-        $this->context = $context;
+        $this->context = $this->validateHashContext($context);
     }
 
     /**
@@ -90,5 +95,28 @@ class TypedHasher implements TypedHasherInterface
     public function getAlgorithm()
     {
         return $this->algorithm;
+    }
+
+    /**
+     * Validates a given incremental hashing context.
+     *
+     * @link http://php.net/manual/en/hash.resources.php
+     * @param mixed $context The context to validate.
+     * @return resource The incremental hashing context.
+     */
+    protected function validateHashContext($context)
+    {
+        if (false === $context
+            || !is_resource($context)
+            || (is_resource($context) && static::HASH_CONTEXT_RESOURCE_TYPE !== get_resource_type())) {
+            throw new UnexpectedValueException(
+                sprintf(
+                    'Unable to initialize hashing context. Your system might not currently support the "%s" algorithm.',
+                    $this->algorithm
+                )
+            );
+        }
+
+        return $context;
     }
 }
