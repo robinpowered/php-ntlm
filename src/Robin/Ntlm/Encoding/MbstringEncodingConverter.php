@@ -62,6 +62,9 @@ class MbstringEncodingConverter implements EncodingConverterInterface
 
     /**
      * {@inheritDoc}
+     *
+     * A list of supported encodings can be determined by running
+     * {@link http://php.net/manual/en/function.mb-list-encodings.php `mb_list_encodings()`}
      */
     public function convert($string, $to_encoding, $from_encoding = null)
     {
