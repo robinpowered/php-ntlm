@@ -81,6 +81,7 @@ class NtV1Hasher implements HasherInterface
      */
     public function __construct(TypedHasherInterface $crypt_hasher, EncodingConverterInterface $encoding_converter)
     {
+        // TODO: Instead of doing awkward "type" validation here, just take in a `HasherFactoryInterface` instead...
         if (static::EXPECTED_HASHER_ALGORITHM !== $crypt_hasher->getAlgorithm()) {
             throw new InvalidArgumentException(
                 sprintf('Invalid crytographic hasher algorithm. Expected "%s"', static::EXPECTED_HASHER_ALGORITHM)
