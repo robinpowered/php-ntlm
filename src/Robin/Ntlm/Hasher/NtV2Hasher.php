@@ -8,7 +8,6 @@
 
 namespace Robin\Ntlm\Hasher;
 
-use InvalidArgumentException;
 use Robin\Ntlm\Credential\Hash;
 use Robin\Ntlm\Credential\HashType;
 use Robin\Ntlm\Credential\Password;
