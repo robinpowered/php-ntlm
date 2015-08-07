@@ -8,12 +8,11 @@
 
 namespace Robin\Ntlm\Hasher;
 
-use InvalidArgumentException;
 use Robin\Ntlm\Credential\Hash;
 use Robin\Ntlm\Credential\HashType;
 use Robin\Ntlm\Credential\Password;
 use Robin\Ntlm\Crypt\Hasher\HasherAlgorithm;
-use Robin\Ntlm\Crypt\Hasher\TypedHasherInterface;
+use Robin\Ntlm\Crypt\Hasher\HasherFactoryInterface;
 use Robin\Ntlm\Encoding\EncodingConverterInterface;
 
 /**
@@ -53,11 +52,12 @@ class NtV1Hasher implements HasherInterface
      */
 
     /**
-     * The cryptographic hashing engine used to generate the hash.
+     * The factory used to build a cryptographic hashing engine for generating
+     * the resulting hash.
      *
-     * @type TypedHasherInterface
+     * @type HasherFactoryInterface
      */
-    private $crypt_hasher;
+    private $crypt_hasher_factory;
 
     /**
      * Used to convert encodings of the input credential for hashing.
@@ -74,21 +74,16 @@ class NtV1Hasher implements HasherInterface
     /**
      * Constructor
      *
-     * @param TypedHasherInterface $crypt_hasher The cryptographic hashing
-     *   engine used to generate the hash.
+     * @param HasherFactoryInterface $crypt_hasher_factory The factory used to
+     *   build a cryptographic hashing engine for generating the resulting hash.
      * @param EncodingConverterInterface $encoding_converter Used to convert
      *   encodings of the input credential for hashing.
      */
-    public function __construct(TypedHasherInterface $crypt_hasher, EncodingConverterInterface $encoding_converter)
-    {
-        // TODO: Instead of doing awkward "type" validation here, just take in a `HasherFactoryInterface` instead...
-        if (static::EXPECTED_HASHER_ALGORITHM !== $crypt_hasher->getAlgorithm()) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid crytographic hasher algorithm. Expected "%s"', static::EXPECTED_HASHER_ALGORITHM)
-            );
-        }
-
-        $this->crypt_hasher = $crypt_hasher;
+    public function __construct(
+        HasherFactoryInterface $crypt_hasher_factory,
+        EncodingConverterInterface $encoding_converter
+    ) {
+        $this->crypt_hasher_factory = $crypt_hasher_factory;
         $this->encoding_converter = $encoding_converter;
     }
 
@@ -102,7 +97,9 @@ class NtV1Hasher implements HasherInterface
             static::HASH_SOURCE_ENCODING
         );
 
-        $binary_hash = $this->crypt_hasher->update($unicode_password_string)->digest();
+        $crypt_hasher = $this->crypt_hasher_factory->build(static::EXPECTED_HASHER_ALGORITHM);
+
+        $binary_hash = $crypt_hasher->update($unicode_password_string)->digest();
 
         return Hash::fromBinaryString($binary_hash, HashType::NT_V1);
     }
