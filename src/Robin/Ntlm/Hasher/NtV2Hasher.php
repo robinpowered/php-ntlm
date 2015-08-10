@@ -105,7 +105,10 @@ class NtV2Hasher implements IdentityMetaHasherInterface
     {
         $nt_v1_hash = $this->nt_v1_hasher->hash($password);
 
-        $hmac_hasher = $this->keyed_hasher_factory->build(static::EXPECTED_HASHER_ALGORITHM, $nt_v1_hash);
+        $hmac_hasher = $this->keyed_hasher_factory->build(
+            static::EXPECTED_HASHER_ALGORITHM,
+            $nt_v1_hash->getValue() // Make sure the key is the binary string
+        );
 
         $data_to_hash = $this->encoding_converter->convert(
             (strtoupper($username) . $domain_name),
