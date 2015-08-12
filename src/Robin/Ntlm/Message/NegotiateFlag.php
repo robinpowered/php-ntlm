@@ -214,7 +214,7 @@ class NegotiateFlag
      *
      * @type int
      */
-    const REQUEST_NON_NTSESSION_KEY = 0x00400000;
+    const REQUEST_NON_NT_SESSION_KEY = 0x00400000;
 
     /**
      * Signifies that the "TargetInfo" field is provided.
