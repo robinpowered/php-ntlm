@@ -18,7 +18,7 @@ interface HasherInterface
 {
 
     /**
-     * Add data to the message to be digested.
+     * Adds data to the message to be digested.
      *
      * @param string $data The data to add.
      * @return $this
@@ -26,7 +26,7 @@ interface HasherInterface
     public function update($data);
 
     /**
-     * Calculate the digest of the message.
+     * Calculates the digest of the message.
      *
      * @return string The message digest as a binary string.
      */
