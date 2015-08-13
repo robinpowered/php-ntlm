@@ -8,6 +8,8 @@
 
 namespace Robin\Ntlm\Message;
 
+use ReflectionClass;
+
 /**
  * Constant definitions of flags used during NTLM message encoding/decoding.
  *
@@ -15,6 +17,10 @@ namespace Robin\Ntlm\Message;
  */
 class NegotiateFlag
 {
+
+    /**
+     * Constants
+     */
 
     /**
      * Signifies a Unicode character set should be used in the message.
@@ -289,4 +295,41 @@ class NegotiateFlag
      * @type int
      */
     const NEGOTIATE_56 = 0x80000000;
+
+
+    /**
+     * Methods
+     */
+
+    /**
+     * Gets a string representing the bit pattern of the flag specification.
+     *
+     * @param bool $reversed If true, the pattern will be reversed.
+     * @return string A formatted string representing the bit-spec.
+     */
+    public static function getSpecificationString($reversed = false)
+    {
+        $reflection = new ReflectionClass(get_class());
+        $constants = $reflection->getConstants();
+
+        if ($reversed) {
+            $constants = array_reverse($constants);
+        }
+
+        $string = '';
+
+        foreach ($constants as $name => $int_val) {
+            $binary_val_string = base_convert((string) $int_val, '10', '2');
+
+            $string .= sprintf(
+                '0b%s : %s',
+                str_pad($binary_val_string, 32, '0', STR_PAD_LEFT),
+                $name
+            );
+
+            $string .= PHP_EOL;
+        }
+
+        return $string;
+    }
 }
