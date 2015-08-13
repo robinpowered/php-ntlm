@@ -11,6 +11,8 @@ namespace Robin\Ntlm\Message;
 /**
  * Encodes an NTLM "NEGOTIATE_MESSAGE" to be used in the client-server
  * challenge/response flow.
+ *
+ * @link https://msdn.microsoft.com/en-us/library/cc236641.aspx
  */
 interface NegotiateMessageEncoderInterface
 {
