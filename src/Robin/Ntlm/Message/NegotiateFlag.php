@@ -122,7 +122,7 @@ class NegotiateFlag
      *
      * @type int
      */
-    const ANONYMOUS = 0x00000800;
+    const NEGOTIATE_ANONYMOUS = 0x00000800;
 
     /**
      * Signifies that a domain name is provided.
