@@ -27,8 +27,6 @@ class ServerChallenge
      * an unsigned 64-bit integer, which doesn't fit in the native numeric type
      * even on 64-bit PHP installations.
      *
-     * Example: '0xfe4972bc'
-     *
      * @type string
      */
     private $nonce;
