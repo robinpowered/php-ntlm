@@ -21,7 +21,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
 ## Installation
 
 1. [Get Composer][composer-website]
-2. Add `robinpowered/php-ntlm` to your dependencies: `composer require robinpowered/php-ntlm`
+2. Add `robinpowered/php-ntlm` to your Composer required dependencies: `composer require robinpowered/php-ntlm`
 3. Include the [Composer autoloader][composer-documentation-autoloading]
 
 
