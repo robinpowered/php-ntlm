@@ -8,7 +8,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
 ## Features
 
 - NTLM client message encoding and decoding
-- Multiple text-encoding libraries supported
+- Multiple text-encoding native-extensions supported
 - LM, NTv1, and NTv2 hashing algorithms supported
 
 
