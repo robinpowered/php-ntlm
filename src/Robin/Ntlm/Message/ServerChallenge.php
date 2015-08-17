@@ -20,7 +20,7 @@ class ServerChallenge
 
     /**
      * A 64-bit (8-byte) unsigned "nonce" (number used once) represented as a
-     * hexadecimal numeric string.
+     * binary numeric string.
      *
      * NOTE: This is stored and represented as a string, rather than a native
      * numeric value, due to limitations with PHP's number system. The value is
@@ -51,7 +51,7 @@ class ServerChallenge
      * Constructor
      *
      * @param string $nonce A 64-bit (8-byte) unsigned "nonce" (number used
-     *   once) represented as a hexadecimal numeric string.
+     *   once) represented as a binary numeric string.
      * @param int $negotiate_flags The negotiate flags represented as a 32-bit
      *   unsigned integer.
      */
@@ -64,7 +64,7 @@ class ServerChallenge
     /**
      * Gets the 64-bit (8-byte) unsigned "nonce".
      *
-     * @return string The nonce represented as a hexadecimal numeric string.
+     * @return string The nonce represented as a binary numeric string.
      */
     public function getNonce()
     {
