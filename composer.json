@@ -2,13 +2,19 @@
     "name": "robinpowered/php-ntlm",
     "description": "Message encoder/decoder and password hasher for the NTLM authentication protocol",
     "type": "library",
+    "keywords": ["ntlm", "nt", "lm", "hash", "authentication"],
     "license": "Apache-2.0",
     "authors": [
         {
             "name": "Trevor Suarez",
-            "email": "trevor@robinpowered.com"
+            "email": "trevor@robinpowered.com",
+            "role": "Original creator"
         }
     ],
+    "support": {
+        "issues": "https://github.com/robinpowered/php-ntlm/issues",
+        "source": "https://github.com/robinpowered/php-ntlm"
+    },
     "require": {
         "php-64bit": ">=5.3.0"
     },
