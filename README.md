@@ -39,6 +39,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
     - [ ] NTLM v1 response support
     - [ ] NTLM v2 response support
     - [ ] Encrypted session key exchange support
+- [ ] Tests... ugh.
 
 
 ## License
