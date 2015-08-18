@@ -195,7 +195,7 @@ class NegotiateFlag
      * NOTE: The naming scheme here is confusing, but this refers to a second
      * revision of a session security scheme, and not "NTLM v2" authentication.
      * In other words, using this session security scheme does not mean that
-     * NTLM v2 authentication must be used, as it will still work with NTLM v1
+     * NTLMv2 authentication must be used, as it will still work with NTLMv1
      * authentication.
      *
      * @type int
