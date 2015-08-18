@@ -25,6 +25,22 @@ secure version of a credential for storage (rather than storing passwords in "pl
 3. Include the [Composer autoloader][composer-documentation-autoloading]
 
 
+## TODO
+
+- [x] LM hashing
+- [x] NTv1 hashing
+- [x] NTv2 hashing
+- [x] NTLM negotiate message encoding
+- [x] NTLM challenge message decoding
+    - [ ] TargetName parsing/handling
+    - [ ] TargetInfo parsing/handling
+    - [ ] Version parsing/handling (for debugging purposes only)
+- [ ] NTLM authenticate message encoding
+    - [ ] NTLM v1 response support
+    - [ ] NTLM v2 response support
+    - [ ] Encrypted session key exchange support
+
+
 ## License
 
 **PHP-NTLM** is licensed under the [Apache License, Version 2.0][license-file].
