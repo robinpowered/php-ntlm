@@ -25,7 +25,7 @@ abstract class AbstractHasherFactory
     /**
      * The algorithms supported by this factory/platform.
      *
-     * @type []string
+     * @type string[]
      */
     private $supported_algorithms;
 
@@ -59,7 +59,7 @@ abstract class AbstractHasherFactory
     /**
      * Gets the algorithms supported by this factory/platform.
      *
-     * @return []string
+     * @return string[]
      */
     public function getSupportedAlgorithms()
     {

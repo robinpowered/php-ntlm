@@ -53,7 +53,7 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
      * array of integers here instead and we'll combine them later.
      *
      * @link https://wiki.php.net/rfc/const_scalar_exprs
-     * @type []int
+     * @type int[]
      */
     private static $flags = [
         NegotiateFlag::NEGOTIATE_UNICODE,
