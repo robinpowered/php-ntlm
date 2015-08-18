@@ -32,9 +32,12 @@ secure version of a credential for storage (rather than storing passwords in "pl
 - [x] NTv2 hashing
 - [x] NTLM negotiate message encoding
 - [x] NTLM challenge message decoding
-    - [ ] TargetName parsing/handling
-    - [ ] TargetInfo parsing/handling
-    - [ ] Version parsing/handling (for debugging purposes only)
+    - [x] Message structure and data validation
+    - [x] Negotiate flag decoding
+    - [x] Server challenge "nonce" handling
+    - [ ] \(Optional) TargetName parsing/handling
+    - [ ] \(Optional) TargetInfo parsing/handling
+    - [ ] \(Optional) Version parsing/handling (for debugging purposes only)
 - [ ] NTLM authenticate message encoding
     - [ ] NTLM v1 response support
     - [ ] NTLM v2 response support
