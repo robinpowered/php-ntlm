@@ -130,6 +130,9 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
         $negotiate_flags = substr($challenge_message, static::NEGOTIATE_FLAGS_OFFSET, static::NEGOTIATE_FLAGS_LENGTH);
         $challenge_nonce = substr($challenge_message, static::CHALLENGE_NONCE_OFFSET, static::CHALLENGE_NONCE_LENGTH);
 
-        return new ServerChallenge($challenge_nonce, $negotiate_flags);
+        return new ServerChallenge(
+            $challenge_nonce,
+            unpack('V', $negotiate_flags)
+        );
     }
 }
