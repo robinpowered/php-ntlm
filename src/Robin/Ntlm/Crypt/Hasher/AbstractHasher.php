@@ -98,10 +98,7 @@ abstract class AbstractHasher implements HasherInterface
             || !is_resource($context)
             || (is_resource($context) && static::HASH_CONTEXT_RESOURCE_TYPE !== get_resource_type($context))) {
             throw new UnexpectedValueException(
-                sprintf(
-                    'Unable to initialize hashing context. Your system might not currently support the "%s" algorithm.',
-                    $this->algorithm
-                )
+                'Unable to initialize hashing context. Your system might not support the supplied algorithm.'
             );
         }
 
