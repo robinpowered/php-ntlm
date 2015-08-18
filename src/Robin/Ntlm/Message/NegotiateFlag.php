@@ -192,9 +192,15 @@ class NegotiateFlag
      * Known as "NTLMSSP_NEGOTIATE_EXTENDED_SESSIONSECURITY" in the
      * specification documentation.
      *
+     * NOTE: The naming scheme here is confusing, but this refers to a second
+     * revision of a session security scheme, and not "NTLM v2" authentication.
+     * In other words, using this session security scheme does not mean that
+     * NTLM v2 authentication must be used, as it will still work with NTLM v1
+     * authentication.
+     *
      * @type int
      */
-    const NEGOTIATE_EXTENDED_SECURITY = 0x00080000;
+    const NEGOTIATE_EXTENDED_SESSION_SECURITY = 0x00080000;
 
     /**
      * Signifies that an "identify level token" should be used in the message.
