@@ -39,7 +39,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
     - [ ] \(Optional) TargetInfo parsing/handling
     - [ ] \(Optional) Version parsing/handling (for debugging purposes only)
 - [ ] NTLM authenticate message encoding
-    - [ ] NTLM v1 response support
+    - [x] NTLM v1 response support
     - [ ] NTLM v2 response support
     - [ ] Extended session security (NTLM2 session key) support
     - [ ] Encrypted session key exchange support
