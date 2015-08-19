@@ -96,7 +96,7 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
      */
     public function decode($challenge_message)
     {
-        if (!is_string($challenge_message) || static::MINIMUM_MESSAGE_LENGTH <= strlen($challenge_message)) {
+        if (!is_string($challenge_message) || static::MINIMUM_MESSAGE_LENGTH >= strlen($challenge_message)) {
             throw new UnexpectedValueException(
                 sprintf(
                     'Provided challenge message isn\'t a %d-byte (or longer) string',
