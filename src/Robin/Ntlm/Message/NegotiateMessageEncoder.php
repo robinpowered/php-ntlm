@@ -156,7 +156,8 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
     }
 
     /**
-     * Calculates the offset of the message "Payload" from the most-significant bit.
+     * Calculates the offset of the "Payload" in the encoded message from the
+     * most-significant bit.
      *
      * @param int $negotiate_flags The negotiation flags encoded in the message.
      * @return int The offset, in bytes.
@@ -177,11 +178,6 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
         if ((NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED & $negotiate_flags)
             === NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED) {
             $offset += 8; // 64-bit client hostname field designator
-        }
-
-        if ((NegotiateFlag::NEGOTIATE_VERSION & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_VERSION) {
-            $offset += 8; // 64-bit version designator
         }
 
         return $offset;
