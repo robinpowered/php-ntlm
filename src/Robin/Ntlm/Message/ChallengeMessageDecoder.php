@@ -105,16 +105,8 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
             );
         }
 
-        // Split the message into its bytes
-        $message_byte_array = str_split($challenge_message, 1);
-
         // Grab the signature from the expected byte range
-        $signature = array_reduce(
-            array_slice($message_byte_array, static::SIGNATURE_OFFSET, strlen(static::SIGNATURE)),
-            function ($string, $ordinal) {
-                return ($string . chr($ordinal));
-            }
-        );
+        $signature = substr($challenge_message, static::SIGNATURE_OFFSET, strlen(static::SIGNATURE));
 
         if (static::SIGNATURE !== $signature) {
             throw new UnexpectedValueException('Invalid message signature');
