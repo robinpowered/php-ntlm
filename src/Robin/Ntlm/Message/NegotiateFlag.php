@@ -15,7 +15,7 @@ use ReflectionClass;
  *
  * @link https://msdn.microsoft.com/en-us/library/cc236650.aspx
  */
-class NegotiateFlag
+final class NegotiateFlag
 {
 
     /**

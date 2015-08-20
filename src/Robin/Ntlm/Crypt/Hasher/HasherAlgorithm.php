@@ -15,7 +15,7 @@ namespace Robin\Ntlm\Crypt\Hasher;
  * {@link http://php.net/manual/en/function.hash-algos.php `hash_algos()`}
  * function.
  */
-class HasherAlgorithm
+final class HasherAlgorithm
 {
 
     /**

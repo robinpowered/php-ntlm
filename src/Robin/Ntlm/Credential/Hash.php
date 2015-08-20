@@ -14,7 +14,7 @@ namespace Robin\Ntlm\Credential;
  * This representation is safe for storage, as the plain-text password can't be
  * determined from this representation.
  */
-class Hash implements HashCredentialInterface
+final class Hash implements HashCredentialInterface
 {
 
     /**

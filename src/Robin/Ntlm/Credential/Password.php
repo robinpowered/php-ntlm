@@ -11,7 +11,7 @@ namespace Robin\Ntlm\Credential;
 /**
  * Represents a plain-text password credential.
  */
-class Password implements CredentialInterface
+final class Password implements CredentialInterface
 {
 
     /**

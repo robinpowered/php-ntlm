@@ -11,7 +11,7 @@ namespace Robin\Ntlm\Crypt;
 /**
  * Constant definitions of modes of operation for block ciphers.
  */
-class CipherMode
+final class CipherMode
 {
 
     /**

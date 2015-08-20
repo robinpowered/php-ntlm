@@ -11,7 +11,7 @@ namespace Robin\Ntlm\Credential;
 /**
  * Constant definitions of types of NTLM-compatible hashes.
  */
-class HashType
+final class HashType
 {
 
     /**
