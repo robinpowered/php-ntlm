@@ -207,11 +207,7 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
             $nt_challenge_response = $this->calculateChallengeResponseData($nt_hash, $server_challenge_nonce);
         }
 
-        $payload_offset = static::calculatePayloadOffset(
-            $negotiate_flags,
-            (null !== $lm_challenge_response),
-            (null !== $nt_challenge_response)
-        );
+        $payload_offset = static::calculatePayloadOffset($negotiate_flags);
         $message_position = $payload_offset;
 
         // Prepare a binary string to be returned
@@ -324,13 +320,9 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
      * most-significant bit.
      *
      * @param int $negotiate_flags The negotiation flags encoded in the message.
-     * @param bool $lm_response Whether or not the LM challenge response should
-     *   be considered in the offset (whether or not it's in the message).
-     * @param bool $nt_response Whether or not the NT challenge response should
-     *   be considered in the offset (whether or not it's in the message).
      * @return int The offset, in bytes.
      */
-    public static function calculatePayloadOffset($negotiate_flags, $lm_response = true, $nt_response = true)
+    public static function calculatePayloadOffset($negotiate_flags)
     {
         $offset = 0;
 
