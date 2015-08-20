@@ -55,7 +55,7 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
      * @link https://wiki.php.net/rfc/const_scalar_exprs
      * @type int[]
      */
-    private static $flags = [
+    private static $default_flags = [
         NegotiateFlag::NEGOTIATE_UNICODE,
         NegotiateFlag::NEGOTIATE_OEM,
         NegotiateFlag::REQUEST_TARGET,
@@ -94,7 +94,7 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
     /**
      * {@inheritDoc}
      */
-    public function encode($nt_domain, $client_hostname)
+    public function encode($nt_domain, $client_hostname, $negotiate_flags = null)
     {
         // Convert our provided values to proper encoding
         $nt_domain = $this->encoding_converter->convert(
@@ -107,7 +107,7 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
         );
 
         // Determine and calculate some values
-        $negotiate_flags = $this->getNegotiateFlags();
+        $negotiate_flags = (null === $negotiate_flags) ? static::getDefaultNegotiateFlags() : $negotiate_flags;
         $payload_offset = static::calculatePayloadOffset($negotiate_flags);
         $domain_name_length = strlen($nt_domain);
         $hostname_length = strlen($client_hostname);
@@ -140,14 +140,14 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
     }
 
     /**
-     * Gets the negotiate flags.
+     * Gets the default negotiate flags.
      *
      * @return int The flags represented as a 32-bit unsigned integer.
      */
-    public function getNegotiateFlags()
+    public static function getDefaultNegotiateFlags()
     {
         return array_reduce(
-            self::$flags,
+            self::$default_flags,
             function ($result, $flag) {
                 return ($result + $flag);
             },

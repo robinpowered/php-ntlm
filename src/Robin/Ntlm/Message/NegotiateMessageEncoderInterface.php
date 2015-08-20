@@ -23,7 +23,10 @@ interface NegotiateMessageEncoderInterface
      * @param string $nt_domain The domain name of the NT user authenticating.
      * @param string $client_hostname The hostname of the client (the hostname
      *   of the machine calling this code).
+     * @param int $negotiate_flags A 32-bit unsigned integer representing the
+     *   flags to be negotiated with the authentication server. Optionally
+     *   specified, so implementations should provide accessible default flags.
      * @return string The encoded message as a binary string.
      */
-    public function encode($nt_domain, $client_hostname);
+    public function encode($nt_domain, $client_hostname, $negotiate_flags = null);
 }
