@@ -220,36 +220,29 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
         $binary_string .= static::SIGNATURE; // 8-byte signature
         $binary_string .= pack('V', static::MESSAGE_TYPE); // 32-bit unsigned little-endian
 
-        if (null !== $lm_challenge_response) {
-            $lm_response_length = strlen($lm_challenge_response);
+        $lm_response_length = strlen($lm_challenge_response);
 
-            // LM challenge response fields: length; length; offset of the value from the beginning of the message
-            $binary_string .= pack('v', $lm_response_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('v', $lm_response_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-            $message_position += $lm_response_length;
-        }
+        // LM challenge response fields: length; length; offset of the value from the beginning of the message
+        $binary_string .= pack('v', $lm_response_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('v', $lm_response_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
+        $message_position += $lm_response_length;
 
-        if (null !== $nt_challenge_response) {
-            $nt_response_length = strlen($nt_challenge_response);
+        $nt_response_length = strlen($nt_challenge_response);
 
-            // NT challenge response fields: length; length; offset of the value from the beginning of the message
-            $binary_string .= pack('v', $nt_response_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('v', $nt_response_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-            $message_position += $nt_response_length;
-        }
+        // NT challenge response fields: length; length; offset of the value from the beginning of the message
+        $binary_string .= pack('v', $nt_response_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('v', $nt_response_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
+        $message_position += $nt_response_length;
 
-        if ((NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED) {
-            $domain_name_length = strlen($nt_domain);
+        $domain_name_length = strlen($nt_domain);
 
-            // Domain name fields: length; length; offset of the value from the beginning of the message
-            $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-            $message_position += $domain_name_length;
-        }
+        // Domain name fields: length; length; offset of the value from the beginning of the message
+        $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
+        $message_position += $domain_name_length;
 
         $username_length = strlen($username);
 
@@ -259,27 +252,21 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
         $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
         $message_position += $username_length;
 
-        if ((NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED) {
-            $hostname_length = strlen($client_hostname);
+        $hostname_length = strlen($client_hostname);
 
-            // Domain name fields: length; length; offset of the value from the beginning of the message
-            $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-            $message_position += $hostname_length;
-        }
+        // Domain name fields: length; length; offset of the value from the beginning of the message
+        $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
+        $message_position += $hostname_length;
 
-        if ((NegotiateFlag::NEGOTIATE_KEY_EXCHANGE & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_KEY_EXCHANGE) {
-            $session_key_length = strlen($session_key);
+        $session_key_length = strlen($session_key);
 
-            // Domain name fields: length; length; offset of the value from the beginning of the message
-            $binary_string .= pack('v', $session_key_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('v', $session_key_length); // 16-bit unsigned little-endian
-            $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-            $message_position += $session_key_length;
-        }
+        // Domain name fields: length; length; offset of the value from the beginning of the message
+        $binary_string .= pack('v', $session_key_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('v', $session_key_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
+        $message_position += $session_key_length;
 
         $binary_string .= $negotiate_flags;
 
@@ -350,30 +337,14 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
         $offset += strlen(static::SIGNATURE); // 8-byte signature
         $offset += 4; // Message-type indicator
 
-        if ($lm_response) {
-            $offset += 8; // 64-bit LM challenge response field designator
-        }
+        $offset += 8; // 64-bit LM challenge response field designator
+        $offset += 8; // 64-bit NT challenge response field designator
 
-        if ($nt_response) {
-            $offset += 8; // 64-bit NT challenge response field designator
-        }
-
-        if ((NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED) {
-            $offset += 8; // 64-bit domain name field designator
-        }
-
+        $offset += 8; // 64-bit domain name field designator
         $offset += 8; // 64-bit username field designator
+        $offset += 8; // 64-bit client hostname field designator
 
-        if ((NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED) {
-            $offset += 8; // 64-bit client hostname field designator
-        }
-
-        if ((NegotiateFlag::NEGOTIATE_KEY_EXCHANGE & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_KEY_EXCHANGE) {
-            $offset += 8; // 64-bit session key field designator
-        }
+        $offset += 8; // 64-bit session key field designator
 
         $offset += 4; // 32-bit Negotation flags
 
