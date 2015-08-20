@@ -170,15 +170,8 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
         $offset += 4; // Message-type indicator
         $offset += 4; // 32-bit Negotation flags
 
-        if ((NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED) {
-            $offset += 8; // 64-bit domain name field designator
-        }
-
-        if ((NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED) {
-            $offset += 8; // 64-bit client hostname field designator
-        }
+        $offset += 8; // 64-bit domain name field designator
+        $offset += 8; // 64-bit client hostname field designator
 
         return $offset;
     }
