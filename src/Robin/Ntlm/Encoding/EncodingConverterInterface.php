@@ -19,9 +19,9 @@ interface EncodingConverterInterface
      *
      * @param string $string The string to convert the encoding of.
      * @param string $to_encoding The desired encoding of the resulting string.
-     * @param string $from_encoding The encoding of the input string. If left as
-     *   `null`, implementations may decide whether they use a default encoding
-     *   or attempt to detect the encoding of the input string.
+     * @param string|null $from_encoding The encoding of the input string. If
+     *   left as `null`, implementations may decide whether they use a default
+     *   encoding or attempt to detect the encoding of the input string.
      * @return string The result string with the desired character encoding.
      */
     public function convert($string, $to_encoding, $from_encoding = null);
