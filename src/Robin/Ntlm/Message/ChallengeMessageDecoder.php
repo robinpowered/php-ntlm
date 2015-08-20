@@ -112,7 +112,7 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
             throw new UnexpectedValueException('Invalid message signature');
         }
 
-        $message_type = unpack('V', substr($challenge_message, static::MESSAGE_TYPE_OFFSET, 4));
+        $message_type = unpack('V', substr($challenge_message, static::MESSAGE_TYPE_OFFSET, 4))[1];
 
         if (static::MESSAGE_TYPE !== $message_type) {
             throw new UnexpectedValueException('Invalid message type');
@@ -124,7 +124,7 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
 
         return new ServerChallenge(
             $challenge_nonce,
-            unpack('V', $negotiate_flags)
+            unpack('V', $negotiate_flags)[1]
         );
     }
 }
