@@ -268,7 +268,7 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
         $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
         $message_position += $session_key_length;
 
-        $binary_string .= $negotiate_flags;
+        $binary_string .= pack('V', $negotiate_flags);
 
         // Add our payload data
         $binary_string .= $lm_challenge_response;
