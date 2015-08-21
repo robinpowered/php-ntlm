@@ -96,18 +96,32 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
      */
     public function encode($nt_domain, $client_hostname, $negotiate_flags = null)
     {
-        // Convert our provided values to proper encoding
-        $nt_domain = $this->encoding_converter->convert(
-            strtoupper($nt_domain),
-            static::OEM_ENCODING
-        );
-        $client_hostname = $this->encoding_converter->convert(
-            strtoupper($client_hostname),
-            static::OEM_ENCODING
-        );
+        // Get our default negotiate flags if none were supplied
+        $negotiate_flags = (null === $negotiate_flags) ? static::getDefaultNegotiateFlags() : $negotiate_flags;
+
+        if ((NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED & $negotiate_flags)
+            === NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED) {
+            $nt_domain = $this->encoding_converter->convert(
+                strtoupper($nt_domain),
+                static::OEM_ENCODING
+            );
+        } else {
+            // If the domain supplied flag isn't set, set the domain to an empty byte string
+            $nt_domain = '';
+        }
+
+        if ((NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED & $negotiate_flags)
+            === NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED) {
+            $client_hostname = $this->encoding_converter->convert(
+                strtoupper($client_hostname),
+                static::OEM_ENCODING
+            );
+        } else {
+            // If the hostname supplied flag isn't set, set the domain to an empty byte string
+            $client_hostname = '';
+        }
 
         // Determine and calculate some values
-        $negotiate_flags = (null === $negotiate_flags) ? static::getDefaultNegotiateFlags() : $negotiate_flags;
         $payload_offset = static::calculatePayloadOffset($negotiate_flags);
         $domain_name_length = strlen($nt_domain);
         $hostname_length = strlen($client_hostname);
