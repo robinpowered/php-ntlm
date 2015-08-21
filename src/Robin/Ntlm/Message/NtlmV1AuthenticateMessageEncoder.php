@@ -312,10 +312,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     public function calculateChallengeResponseData(HashCredentialInterface $hash_credential, $data)
     {
         // Nul pad the credential hash to the full key size
-        $padded_hash = pack(
-            'a'. static::DESL_FULL_KEY_LENGTH,
-            $hash_credential->getValue()
-        );
+        $padded_hash = str_pad($hash_credential->getValue(), static::DESL_FULL_KEY_LENGTH, static::NULL_PAD_CHARACTER);
 
         $key_blocks = str_split($padded_hash, static::DESL_KEY_BLOCK_SEGMENT_LENGTH);
 
