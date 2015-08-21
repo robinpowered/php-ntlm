@@ -8,7 +8,6 @@
 
 namespace Robin\Ntlm\Message;
 
-use Robin\Ntlm\Credential\CredentialInterface;
 use Robin\Ntlm\Encoding\EncodingConverterInterface;
 
 /**
