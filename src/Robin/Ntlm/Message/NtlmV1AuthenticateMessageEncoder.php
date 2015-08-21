@@ -25,47 +25,12 @@ use UnexpectedValueException;
  *
  * Uses the NTLMv1 protocol for encoding the "AUTHENTICATE_MESSAGE".
  */
-class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInterface
+class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncoder
 {
 
     /**
      * Constants
      */
-
-    /**
-     * An 8-byte string denoting the protocol in use.
-     *
-     * @type string
-     */
-    const SIGNATURE = "NTLMSSP\0";
-
-    /**
-     * A 32-bit unsigned integer indicating the message type.
-     *
-     * @type int
-     */
-    const MESSAGE_TYPE = 0x00000003;
-
-    /**
-     * The character encoding used for "OEM" encoded values.
-     *
-     * @type string
-     */
-    const OEM_ENCODING = 'ASCII';
-
-    /**
-     * The character encoding used for Unicode encoded values.
-     *
-     * @type string
-     */
-    const UNICODE_ENCODING = 'UTF-16LE';
-
-    /**
-     * The character used for null padding.
-     *
-     * @type string
-     */
-    const NULL_PAD_CHARACTER = "\0";
 
     /**
      * The length of the full DESL (DES "Long") key source before splitting into
@@ -93,20 +58,6 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
     const EXTENDED_SESSION_SECURITY_HASHER_ALGORITHM = HasherAlgorithm::MD5;
 
     /**
-     * The length of the client challenge to generate, if necessary, in bytes.
-     *
-     * @type int
-     */
-    const CLIENT_CHALLENGE_LENGTH = 8;
-
-    /**
-     * The length of the LM response when extended session security is used.
-     *
-     * @type int
-     */
-    const EXTENDED_SESSION_SECURITY_LM_RESPONSE_LENGTH = 24;
-
-    /**
      * The length of the challenge string used to create the NT response when
      * extended session security is used.
      *
@@ -118,13 +69,6 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
     /**
      * Properties
      */
-
-    /**
-     * Used to convert encodings of strings before adding them to the message.
-     *
-     * @type EncodingConverterInterface
-     */
-    private $encoding_converter;
 
     /**
      * Used to create the "LM hash" in the message.
@@ -192,7 +136,8 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
         DesEncrypterInterface $des_encrypter,
         HasherFactoryInterface $crypt_hasher_factory
     ) {
-        $this->encoding_converter = $encoding_converter;
+        parent::__construct($encoding_converter);
+
         $this->lm_hasher = $lm_hasher;
         $this->nt_hasher = $nt_hasher;
         $this->random_byte_generator = $random_byte_generator;
@@ -213,27 +158,22 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
         $negotiate_flags = $server_challenge->getNegotiateFlags();
         $server_challenge_nonce = $server_challenge->getNonce();
 
-        // If expecting unicode
-        if ((NegotiateFlag::NEGOTIATE_UNICODE & $negotiate_flags) === NegotiateFlag::NEGOTIATE_UNICODE) {
-            $expected_encoding = static::UNICODE_ENCODING;
-        } else {
-            $expected_encoding = static::OEM_ENCODING;
+        $client_challenge = null;
+
+        // If extended session security is negotiated
+        if ((NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY & $negotiate_flags)
+            === NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY) {
+            // Generate a client challenge
+            $client_challenge = $this->random_byte_generator->generate(static::CLIENT_CHALLENGE_LENGTH);
         }
 
-        // TODO: Generate an encrypted random session key
-        $session_key = '';
-
-        // Convert our provided values to proper encoding
-        $username = $this->encoding_converter->convert($username, $expected_encoding);
-        $nt_domain = $this->encoding_converter->convert(strtoupper($nt_domain), $expected_encoding);
-        $client_hostname = $this->encoding_converter->convert(strtoupper($client_hostname), $expected_encoding);
-        $session_key = $this->encoding_converter->convert(strtoupper($session_key), $expected_encoding);
-
-        // Default hash and challenge responsevalues
         $lm_hash = null;
         $nt_hash = null;
         $lm_challenge_response = null;
         $nt_challenge_response = null;
+
+        $calculate_lm_response = true;
+        $calculate_nt_response = true;
 
         if ($credential->isPlaintext()) {
             $lm_hash = $this->lm_hasher->hash($credential);
@@ -242,129 +182,124 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
             switch ($credential->getType()) {
                 case HashType::LM:
                     $lm_hash = $credential;
+                    $calculate_nt_response = false;
                     break;
                 case HashType::NT_V1:
                     $nt_hash = $credential;
+                    $calculate_lm_response = false;
                     break;
                 default:
                     throw new UnexpectedValueException('Unsupported hash credential type');
             }
         }
 
-        // If extended session security is negotiated
-        if ((NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY & $negotiate_flags)
-            === NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY) {
-            // Generate a client challenge
-            $client_challenge = $this->random_byte_generator->generate(static::CLIENT_CHALLENGE_LENGTH);
+        if ($calculate_lm_response) {
+            $lm_challenge_response = $this->calculateLmResponse(
+                $lm_hash,
+                $client_challenge,
+                $server_challenge_nonce
+            );
+        }
 
+        if ($calculate_nt_response) {
+            $nt_challenge_response = $this->calculateNtResponse(
+                $nt_hash,
+                $client_challenge,
+                $server_challenge_nonce
+            );
+        }
+
+        // TODO: Generate an encrypted random session key
+        $session_key = '';
+
+        return $this->encodeBinaryMessageString(
+            $negotiate_flags,
+            $lm_challenge_response,
+            $nt_challenge_response,
+            $nt_domain,
+            $username,
+            $client_hostname,
+            $session_key
+        );
+    }
+
+    /**
+     * Calculate the LM response.
+     *
+     * @param HashCredentialInterface $hash_credential The user's authentication
+     *   LM hash credential.
+     * @param string $client_challenge A randomly generated 64-bit (8-byte)
+     *   unsigned client-generated binary string.
+     * @param string $server_challenge_nonce The 64-bit (8-byte) unsigned
+     *   server-sent "nonce" (number used once) represented as a binary string.
+     * @return string The calculated response as a binary string.
+     */
+    public function calculateLmResponse(
+        HashCredentialInterface $hash_credential,
+        $client_challenge = null,
+        $server_challenge_nonce = null
+    ) {
+        $lm_challenge_response = null;
+
+        // If we have a client challenge, extended session security must be negotiated
+        if (null !== $client_challenge) {
             // Set the LM challenge response to the client challenge, null-padded to the expected length
             $lm_challenge_response = str_pad(
                 $client_challenge,
-                static::EXTENDED_SESSION_SECURITY_LM_RESPONSE_LENGTH,
+                static::LM_RESPONSE_LENGTH,
                 static::NULL_PAD_CHARACTER
             );
-
-            if (null !== $nt_hash) {
-                // Grab a hasher
-                $md5_hasher = $this->crypt_hasher_factory->build(static::EXTENDED_SESSION_SECURITY_HASHER_ALGORITHM);
-
-                // Concat the two challenge strings
-                $nt_extended_security_challenge_source = $server_challenge_nonce . $client_challenge;
-
-                $nt_extended_security_hash = $md5_hasher->update($nt_extended_security_challenge_source)->digest();
-
-                // Our challenge is a substring of the resulting hash
-                $nt_extended_security_challenge = substr(
-                    $nt_extended_security_hash,
-                    0,
-                    static::EXTENDED_SESSION_SECURITY_CHALLENGE_LENGTH
-                );
-
-                // Generate our response
-                $nt_challenge_response = $this->calculateChallengeResponseData(
-                    $nt_hash,
-                    $nt_extended_security_challenge
-                );
-            }
-
         } else {
-            if (null !== $lm_hash) {
-                $lm_challenge_response = $this->calculateChallengeResponseData($lm_hash, $server_challenge_nonce);
-            }
-
-            if (null !== $nt_hash) {
-                $nt_challenge_response = $this->calculateChallengeResponseData($nt_hash, $server_challenge_nonce);
-            }
+            $lm_challenge_response = $this->calculateChallengeResponseData($hash_credential, $server_challenge_nonce);
         }
 
-        $payload_offset = static::calculatePayloadOffset($negotiate_flags);
-        $message_position = $payload_offset;
+        return $lm_challenge_response;
+    }
 
-        // Prepare a binary string to be returned
-        $binary_string = '';
+    /**
+     * Calculate the NT response.
+     *
+     * @param HashCredentialInterface $hash_credential The user's authentication
+     *   NT hash credential.
+     * @param string $client_challenge A randomly generated 64-bit (8-byte)
+     *   unsigned client-generated binary string.
+     * @param string $server_challenge_nonce The 64-bit (8-byte) unsigned
+     *   server-sent "nonce" (number used once) represented as a binary string.
+     * @return string The calculated response as a binary string.
+     */
+    public function calculateNtResponse(
+        HashCredentialInterface $hash_credential,
+        $client_challenge = null,
+        $server_challenge_nonce = null
+    ) {
+        // By default, our encryption data is our server challenge nonce
+        $encryption_data = $server_challenge_nonce;
 
-        $binary_string .= static::SIGNATURE; // 8-byte signature
-        $binary_string .= pack('V', static::MESSAGE_TYPE); // 32-bit unsigned little-endian
+        // If we have a client challenge, extended session security must be negotiated
+        if (null !== $client_challenge) {
+            // Grab a hasher
+            $extended_security_hasher = $this->crypt_hasher_factory->build(
+                static::EXTENDED_SESSION_SECURITY_HASHER_ALGORITHM
+            );
 
-        $lm_response_length = strlen($lm_challenge_response);
+            // Concat the two challenge strings
+            $nt_extended_security_challenge_source = $server_challenge_nonce . $client_challenge;
 
-        // LM challenge response fields: length; length; offset of the value from the beginning of the message
-        $binary_string .= pack('v', $lm_response_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('v', $lm_response_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-        $message_position += $lm_response_length;
+            $nt_extended_security_hash = $extended_security_hasher
+                ->update($nt_extended_security_challenge_source)
+                ->digest();
 
-        $nt_response_length = strlen($nt_challenge_response);
+            // Our challenge is a substring of the resulting hash
+            $nt_extended_security_challenge = substr(
+                $nt_extended_security_hash,
+                0,
+                static::EXTENDED_SESSION_SECURITY_CHALLENGE_LENGTH
+            );
 
-        // NT challenge response fields: length; length; offset of the value from the beginning of the message
-        $binary_string .= pack('v', $nt_response_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('v', $nt_response_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-        $message_position += $nt_response_length;
+            $encryption_data = $nt_extended_security_challenge;
+        }
 
-        $domain_name_length = strlen($nt_domain);
-
-        // Domain name fields: length; length; offset of the value from the beginning of the message
-        $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-        $message_position += $domain_name_length;
-
-        $username_length = strlen($username);
-
-        // Domain name fields: length; length; offset of the value from the beginning of the message
-        $binary_string .= pack('v', $username_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('v', $username_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-        $message_position += $username_length;
-
-        $hostname_length = strlen($client_hostname);
-
-        // Domain name fields: length; length; offset of the value from the beginning of the message
-        $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-        $message_position += $hostname_length;
-
-        $session_key_length = strlen($session_key);
-
-        // Domain name fields: length; length; offset of the value from the beginning of the message
-        $binary_string .= pack('v', $session_key_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('v', $session_key_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-        $message_position += $session_key_length;
-
-        $binary_string .= pack('V', $negotiate_flags);
-
-        // Add our payload data
-        $binary_string .= $lm_challenge_response;
-        $binary_string .= $nt_challenge_response;
-        $binary_string .= $nt_domain;
-        $binary_string .= $username;
-        $binary_string .= $client_hostname;
-        $binary_string .= $session_key;
-
-        return $binary_string;
+        return $this->calculateChallengeResponseData($hash_credential, $encryption_data);
     }
 
     /**
@@ -372,11 +307,11 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
      *
      * @param HashCredentialInterface $hash_credential The authentication
      *   credential hash to compute the response for.
-     * @param string $nonce The 64-bit (8-byte) unsigned server-sent "nonce"
-     *   (number used once) represented as a binary numeric string.
+     * @param string $data The binary string containing the previously
+     *   calculated data to encrypt, depending on the session strategy.
      * @return string The calculated challenge response data as a binary string.
      */
-    public function calculateChallengeResponseData(HashCredentialInterface $hash_credential, $nonce)
+    public function calculateChallengeResponseData(HashCredentialInterface $hash_credential, $data)
     {
         // Nul pad the credential hash to the full key size
         $padded_hash = pack(
@@ -388,13 +323,13 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
 
         $binary_data = array_reduce(
             $key_blocks,
-            function ($result, $key_block) use ($nonce) {
+            function ($result, $key_block) use ($data) {
                 // Generate an initialization vector equal to the length of the nonce
-                $initialization_vector = $this->random_byte_generator->generate(strlen($nonce));
+                $initialization_vector = $this->random_byte_generator->generate(strlen($data));
 
                 return $result . $this->des_encrypter->encrypt(
                     $key_block,
-                    $nonce,
+                    $data,
                     CipherMode::ECB,
                     $initialization_vector
                 );
@@ -403,33 +338,5 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
         );
 
         return $binary_data;
-    }
-
-    /**
-     * Calculates the offset of the "Payload" in the encoded message from the
-     * most-significant bit.
-     *
-     * @param int $negotiate_flags The negotiation flags encoded in the message.
-     * @return int The offset, in bytes.
-     */
-    public static function calculatePayloadOffset($negotiate_flags)
-    {
-        $offset = 0;
-
-        $offset += strlen(static::SIGNATURE); // 8-byte signature
-        $offset += 4; // Message-type indicator
-
-        $offset += 8; // 64-bit LM challenge response field designator
-        $offset += 8; // 64-bit NT challenge response field designator
-
-        $offset += 8; // 64-bit domain name field designator
-        $offset += 8; // 64-bit username field designator
-        $offset += 8; // 64-bit client hostname field designator
-
-        $offset += 8; // 64-bit session key field designator
-
-        $offset += 4; // 32-bit Negotation flags
-
-        return $offset;
     }
 }
