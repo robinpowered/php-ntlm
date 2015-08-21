@@ -193,7 +193,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
             }
         }
 
-        if ($calculate_lm_response) {
+        if (null !== $lm_hash && $calculate_lm_response) {
             $lm_challenge_response = $this->calculateLmResponse(
                 $lm_hash,
                 $client_challenge,
@@ -201,7 +201,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
             );
         }
 
-        if ($calculate_nt_response) {
+        if (null !== $nt_hash && $calculate_nt_response) {
             $nt_challenge_response = $this->calculateNtResponse(
                 $nt_hash,
                 $client_challenge,
@@ -228,9 +228,9 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
      *
      * @param HashCredentialInterface $hash_credential The user's authentication
      *   LM hash credential.
-     * @param string $client_challenge A randomly generated 64-bit (8-byte)
+     * @param string|null $client_challenge A randomly generated 64-bit (8-byte)
      *   unsigned client-generated binary string.
-     * @param string $server_challenge_nonce The 64-bit (8-byte) unsigned
+     * @param string|null $server_challenge_nonce The 64-bit (8-byte) unsigned
      *   server-sent "nonce" (number used once) represented as a binary string.
      * @return string The calculated response as a binary string.
      */
@@ -239,8 +239,6 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $client_challenge = null,
         $server_challenge_nonce = null
     ) {
-        $lm_challenge_response = null;
-
         // If we have a client challenge, extended session security must be negotiated
         if (null !== $client_challenge) {
             // Set the LM challenge response to the client challenge, null-padded to the expected length
@@ -261,9 +259,9 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
      *
      * @param HashCredentialInterface $hash_credential The user's authentication
      *   NT hash credential.
-     * @param string $client_challenge A randomly generated 64-bit (8-byte)
+     * @param string|null $client_challenge A randomly generated 64-bit (8-byte)
      *   unsigned client-generated binary string.
-     * @param string $server_challenge_nonce The 64-bit (8-byte) unsigned
+     * @param string|null $server_challenge_nonce The 64-bit (8-byte) unsigned
      *   server-sent "nonce" (number used once) represented as a binary string.
      * @return string The calculated response as a binary string.
      */
