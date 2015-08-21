@@ -13,6 +13,8 @@ use Robin\Ntlm\Credential\HashCredentialInterface;
 use Robin\Ntlm\Credential\HashType;
 use Robin\Ntlm\Crypt\CipherMode;
 use Robin\Ntlm\Crypt\Des\DesEncrypterInterface;
+use Robin\Ntlm\Crypt\Hasher\HasherAlgorithm;
+use Robin\Ntlm\Crypt\Hasher\HasherFactoryInterface;
 use Robin\Ntlm\Crypt\Random\RandomByteGeneratorInterface;
 use Robin\Ntlm\Encoding\EncodingConverterInterface;
 use Robin\Ntlm\Hasher\HasherInterface;
@@ -59,6 +61,13 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
     const UNICODE_ENCODING = 'UTF-16LE';
 
     /**
+     * The character used for null padding.
+     *
+     * @type string
+     */
+    const NULL_PAD_CHARACTER = "\0";
+
+    /**
      * The length of the full DESL (DES "Long") key source before splitting into
      * blocks, in bytes.
      *
@@ -74,6 +83,36 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
      * @type int
      */
     const DESL_KEY_BLOCK_SEGMENT_LENGTH = 7;
+
+    /**
+     * The expected {@link HasherAlgorithm} for the cryptographic hasher used
+     * for extended session security.
+     *
+     * @type string
+     */
+    const EXTENDED_SESSION_SECURITY_HASHER_ALGORITHM = HasherAlgorithm::MD5;
+
+    /**
+     * The length of the client challenge to generate, if necessary, in bytes.
+     *
+     * @type int
+     */
+    const CLIENT_CHALLENGE_LENGTH = 8;
+
+    /**
+     * The length of the LM response when extended session security is used.
+     *
+     * @type int
+     */
+    const EXTENDED_SESSION_SECURITY_LM_RESPONSE_LENGTH = 24;
+
+    /**
+     * The length of the challenge string used to create the NT response when
+     * extended session security is used.
+     *
+     * @type int
+     */
+    const EXTENDED_SESSION_SECURITY_CHALLENGE_LENGTH = 8;
 
 
     /**
@@ -116,6 +155,14 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
      */
     private $des_encrypter;
 
+    /**
+     * The factory used to build a cryptographic hashing engine for generating
+     * different hashes for various parts of the resulting message.
+     *
+     * @type HasherFactoryInterface
+     */
+    private $crypt_hasher_factory;
+
 
     /**
      * Methods
@@ -133,19 +180,24 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
      *   challenges for extended security support.
      * @param DesEncrypterInterface $des_encrypter Used to compute challenge
      *   responses for the different message hashes.
+     * @param HasherFactoryInterface $crypt_hasher_factory Used to build a
+     *   cryptographic hashing engine for generating different hashes for
+     *   various parts of the resulting message.
      */
     public function __construct(
         EncodingConverterInterface $encoding_converter,
         HasherInterface $lm_hasher,
         HasherInterface $nt_hasher,
         RandomByteGeneratorInterface $random_byte_generator,
-        DesEncrypterInterface $des_encrypter
+        DesEncrypterInterface $des_encrypter,
+        HasherFactoryInterface $crypt_hasher_factory
     ) {
         $this->encoding_converter = $encoding_converter;
         $this->lm_hasher = $lm_hasher;
         $this->nt_hasher = $nt_hasher;
         $this->random_byte_generator = $random_byte_generator;
         $this->des_encrypter = $des_encrypter;
+        $this->crypt_hasher_factory = $crypt_hasher_factory;
     }
 
     /**
@@ -199,12 +251,50 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
             }
         }
 
-        if (null !== $lm_hash) {
-            $lm_challenge_response = $this->calculateChallengeResponseData($lm_hash, $server_challenge_nonce);
-        }
+        // If extended session security is negotiated
+        if ((NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY & $negotiate_flags)
+            === NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY) {
+            // Generate a client challenge
+            $client_challenge = $this->random_byte_generator->generate(static::CLIENT_CHALLENGE_LENGTH);
 
-        if (null !== $nt_hash) {
-            $nt_challenge_response = $this->calculateChallengeResponseData($nt_hash, $server_challenge_nonce);
+            // Set the LM challenge response to the client challenge, null-padded to the expected length
+            $lm_challenge_response = str_pad(
+                $client_challenge,
+                static::EXTENDED_SESSION_SECURITY_LM_RESPONSE_LENGTH,
+                static::NULL_PAD_CHARACTER
+            );
+
+            if (null !== $nt_hash) {
+                // Grab a hasher
+                $md5_hasher = $this->crypt_hasher_factory->build(static::EXTENDED_SESSION_SECURITY_HASHER_ALGORITHM);
+
+                // Concat the two challenge strings
+                $nt_extended_security_challenge_source = $server_challenge_nonce . $client_challenge;
+
+                $nt_extended_security_hash = $md5_hasher->update($nt_extended_security_challenge)->digest();
+
+                // Our challenge is a substring of the resulting hash
+                $nt_extended_security_challenge = substr(
+                    $nt_extended_security_hash,
+                    0,
+                    static::EXTENDED_SESSION_SECURITY_CHALLENGE_LENGTH
+                );
+
+                // Generate our response
+                $nt_challenge_response = $this->calculateChallengeResponseData(
+                    $nt_hash,
+                    $nt_extended_security_challenge
+                );
+            }
+
+        } else {
+            if (null !== $lm_hash) {
+                $lm_challenge_response = $this->calculateChallengeResponseData($lm_hash, $server_challenge_nonce);
+            }
+
+            if (null !== $nt_hash) {
+                $nt_challenge_response = $this->calculateChallengeResponseData($nt_hash, $server_challenge_nonce);
+            }
         }
 
         $payload_offset = static::calculatePayloadOffset($negotiate_flags);
