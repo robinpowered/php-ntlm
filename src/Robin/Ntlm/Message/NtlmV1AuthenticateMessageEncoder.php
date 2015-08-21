@@ -271,7 +271,7 @@ class NtlmV1AuthenticateMessageEncoder implements AuthenticateMessageEncoderInte
                 // Concat the two challenge strings
                 $nt_extended_security_challenge_source = $server_challenge_nonce . $client_challenge;
 
-                $nt_extended_security_hash = $md5_hasher->update($nt_extended_security_challenge)->digest();
+                $nt_extended_security_hash = $md5_hasher->update($nt_extended_security_challenge_source)->digest();
 
                 // Our challenge is a substring of the resulting hash
                 $nt_extended_security_challenge = substr(
