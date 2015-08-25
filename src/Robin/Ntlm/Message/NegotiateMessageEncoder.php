@@ -64,8 +64,6 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
         NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED,
         NegotiateFlag::NEGOTIATE_ALWAYS_SIGN,
         NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY,
-        NegotiateFlag::NEGOTIATE_128,
-        NegotiateFlag::NEGOTIATE_56,
     ];
 
     /**
