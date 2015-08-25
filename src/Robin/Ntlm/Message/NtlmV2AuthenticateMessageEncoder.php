@@ -137,13 +137,13 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     ) {
         $negotiate_flags = $server_challenge->getNegotiateFlags();
         $server_challenge_nonce = $server_challenge->getNonce();
-        $target_name = $server_challenge->getTargetName();
+        $target_info = $server_challenge->getTargetInfo();
 
         // Generate a client challenge
         $client_challenge = $this->random_byte_generator->generate(static::CLIENT_CHALLENGE_LENGTH);
 
         // Encode the "blob"
-        $binary_blob = $this->encodeBlob(new DateTime(), $client_challenge, $target_name);
+        $binary_blob = $this->encodeBlob(new DateTime(), $client_challenge, $target_info);
 
         if ($credential->isPlaintext()) {
             $nt_hash = $this->nt_hasher->hash($credential, $username, $nt_domain);
@@ -214,11 +214,11 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
      * @param DateTime $time The current time.
      * @param string $client_challenge A randomly generated 64-bit (8-byte)
      *   unsigned client-generated binary string.
-     * @param string $target_name The target-name data sent by the server and
+     * @param string $target_info The "TargetInfo" data sent by the server and
      *   encoded in the server challenge.
      * @return string The encoded blob as a binary string.
      */
-    public function encodeBlob(DateTime $time, $client_challenge, $target_name)
+    public function encodeBlob(DateTime $time, $client_challenge, $target_info)
     {
         $blob_data = '';
 
@@ -229,7 +229,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $blob_data .= pack('x4'); // Null-pad the timestamp, we don't need microsecond precision
         $blob_data .= pack('a8', $client_challenge);
         $blob_data .= pack('x4');
-        $blob_data .= pack('a*', $target_name);
+        $blob_data .= pack('a*', $target_info);
         $blob_data .= pack('x4');
 
         return $blob_data;
