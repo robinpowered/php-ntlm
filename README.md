@@ -35,12 +35,12 @@ secure version of a credential for storage (rather than storing passwords in "pl
     - [x] Message structure and data validation
     - [x] Negotiate flag decoding
     - [x] Server challenge "nonce" handling
-    - [ ] \(Optional) TargetName parsing/handling
+    - [x] TargetName parsing/handling
     - [ ] \(Optional) TargetInfo parsing/handling
     - [ ] \(Optional) Version parsing/handling (for debugging purposes only)
 - [ ] NTLM authenticate message encoding
     - [x] NTLM v1 response support
-    - [ ] NTLM v2 response support
+    - [x] NTLM v2 response support
     - [x] Extended session security (NTLM2 session key) support
     - [ ] Encrypted session key exchange support
 - [ ] Tests... ugh.
