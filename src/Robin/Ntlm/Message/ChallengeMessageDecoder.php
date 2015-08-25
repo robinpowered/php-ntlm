@@ -56,6 +56,22 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
     const MESSAGE_TYPE_OFFSET = 8;
 
     /**
+     * The offset in the binary message string of the "target name" length, in
+     * bytes.
+     *
+     * @type int
+     */
+    const TARGET_NAME_LENGTH_OFFSET = 12;
+
+    /**
+     * The offset in the binary message string of the "target name" offset, in
+     * bytes.
+     *
+     * @type int
+     */
+    const TARGET_NAME_BUFFER_OFFSET_OFFSET = 16;
+
+    /**
      * The offset in the binary message string of the negotiate flags, in bytes.
      *
      * @type int
@@ -118,13 +134,20 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
             throw new UnexpectedValueException('Invalid message type');
         }
 
+        $target_name_length = unpack('v', substr($challenge_message, static::TARGET_NAME_LENGTH_OFFSET, 2))[1];
+        $target_name_offset = unpack('V', substr($challenge_message, static::TARGET_NAME_BUFFER_OFFSET_OFFSET, 4))[1];
+
         // Grab our relevant data
         $negotiate_flags = substr($challenge_message, static::NEGOTIATE_FLAGS_OFFSET, static::NEGOTIATE_FLAGS_LENGTH);
         $challenge_nonce = substr($challenge_message, static::CHALLENGE_NONCE_OFFSET, static::CHALLENGE_NONCE_LENGTH);
 
+        // Grab our payload data
+        $target_name = unpack('a*', substr($challenge_message, $target_name_offset, $target_name_length))[1];
+
         return new ServerChallenge(
             $challenge_nonce,
-            unpack('V', $negotiate_flags)[1]
+            unpack('V', $negotiate_flags)[1],
+            $target_name
         );
     }
 }

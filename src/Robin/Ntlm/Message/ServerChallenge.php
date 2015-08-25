@@ -40,6 +40,14 @@ class ServerChallenge
      */
     private $negotiate_flags;
 
+    /**
+     * The "TargetName" as reported by the server, which represents a different
+     * value depending on the negotiated target type.
+     *
+     * @type string
+     */
+    private $target_name;
+
 
     /**
      * Methods
@@ -52,11 +60,14 @@ class ServerChallenge
      *   once) represented as a binary numeric string.
      * @param int $negotiate_flags The negotiate flags represented as a 32-bit
      *   unsigned integer.
+     * @param string $target_name The "TargetName" as reported by the server, as
+     *   a decoded string.
      */
-    public function __construct($nonce, $negotiate_flags)
+    public function __construct($nonce, $negotiate_flags, $target_name)
     {
         $this->nonce = $nonce;
         $this->negotiate_flags = $negotiate_flags;
+        $this->target_name = $target_name;
     }
 
     /**
@@ -77,5 +88,15 @@ class ServerChallenge
     public function getNegotiateFlags()
     {
         return $this->negotiate_flags;
+    }
+
+    /**
+     * Gets the "TargetName".
+     *
+     * @return string
+     */
+    public function getTargetName()
+    {
+        return $this->target_name;
     }
 }
