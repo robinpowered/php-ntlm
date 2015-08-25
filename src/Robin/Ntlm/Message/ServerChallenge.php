@@ -48,6 +48,15 @@ class ServerChallenge
      */
     private $target_name;
 
+    /**
+     * The "TargetInfo" as a raw binary string. This raw binary string contains
+     * a specialized structure known as "AV_PAIRs", and can be further decoded
+     * into its documented parts if necessary.
+     *
+     * @type string
+     */
+    private $target_info;
+
 
     /**
      * Methods
@@ -62,12 +71,14 @@ class ServerChallenge
      *   unsigned integer.
      * @param string $target_name The "TargetName" as reported by the server, as
      *   a decoded string.
+     * @param string $target_info The "TargetInfo" as a raw binary string.
      */
-    public function __construct($nonce, $negotiate_flags, $target_name)
+    public function __construct($nonce, $negotiate_flags, $target_name, $target_info)
     {
         $this->nonce = $nonce;
         $this->negotiate_flags = $negotiate_flags;
         $this->target_name = $target_name;
+        $this->target_info = $target_info;
     }
 
     /**
@@ -93,10 +104,20 @@ class ServerChallenge
     /**
      * Gets the "TargetName".
      *
-     * @return string
+     * @return string The target name represented as a decoded string.
      */
     public function getTargetName()
     {
         return $this->target_name;
+    }
+
+    /**
+     * Gets the "TargetInfo".
+     *
+     * @return string The target info represented as a raw binary string.
+     */
+    public function getTargetInfo()
+    {
+        return $this->target_info;
     }
 }
