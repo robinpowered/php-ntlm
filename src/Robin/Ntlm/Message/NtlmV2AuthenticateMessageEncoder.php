@@ -114,7 +114,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
      */
     public function __construct(
         EncodingConverterInterface $encoding_converter,
-        HasherInterface $nt_hasher,
+        IdentityMetaHasherInterface $nt_hasher,
         RandomByteGeneratorInterface $random_byte_generator,
         KeyedHasherFactoryInterface $crypt_hasher_factory
     ) {
