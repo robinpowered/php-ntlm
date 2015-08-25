@@ -24,6 +24,8 @@ use UnexpectedValueException;
  * {@inheritDoc}
  *
  * Uses the NTLMv1 protocol for encoding the "AUTHENTICATE_MESSAGE".
+ *
+ * @link https://msdn.microsoft.com/en-us/library/cc236699.aspx
  */
 class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncoder
 {
