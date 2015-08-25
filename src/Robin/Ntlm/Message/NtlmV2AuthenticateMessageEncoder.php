@@ -225,7 +225,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $blob_data .= pack('C', static::BLOB_RESPONSE_VERSION);
         $blob_data .= pack('C', static::BLOB_HIGHEST_RESPONSE_VERSION);
         $blob_data .= pack('x6');
-        $blob_data .= pack('V', $time->setTimestamp());
+        $blob_data .= pack('V', $time->getTimestamp());
         $blob_data .= pack('x4'); // Null-pad the timestamp, we don't need microsecond precision
         $blob_data .= pack('a8', $client_challenge);
         $blob_data .= pack('x4');
