@@ -36,7 +36,8 @@ secure version of a credential for storage (rather than storing passwords in "pl
     - [x] Negotiate flag decoding
     - [x] Server challenge "nonce" handling
     - [x] TargetName parsing/handling
-    - [ ] \(Optional) TargetInfo parsing/handling
+    - [x] \(Optional) TargetInfo parsing/handling
+        - [ ] \(Optional) AV_PAIR decoding
     - [ ] \(Optional) Version parsing/handling (for debugging purposes only)
 - [ ] NTLM authenticate message encoding
     - [x] NTLM v1 response support
