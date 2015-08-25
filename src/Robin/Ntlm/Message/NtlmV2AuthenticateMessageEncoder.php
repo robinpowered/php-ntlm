@@ -145,7 +145,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $binary_blob = $this->encodeBlob(new DateTime(), $client_challenge, ''); // TODO: Include the target-name here.
 
         if ($credential->isPlaintext()) {
-            $nt_hash = $this->nt_hasher->hash($credential);
+            $nt_hash = $this->nt_hasher->hash($credential, $username, $nt_domain);
         } elseif ($credential instanceof HashCredentialInterface && HashType::NT_V2 === $credential->getType()) {
             $nt_hash = $credential;
         } else {
