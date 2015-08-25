@@ -226,7 +226,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     }
 
     /**
-     * Calculate the LM response.
+     * Calculates the LM response.
      *
      * @param HashCredentialInterface $hash_credential The user's authentication
      *   LM hash credential.
@@ -257,7 +257,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     }
 
     /**
-     * Calculate the NT response.
+     * Calculates the NT response.
      *
      * @param HashCredentialInterface $hash_credential The user's authentication
      *   NT hash credential.

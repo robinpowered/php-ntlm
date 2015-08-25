@@ -178,7 +178,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     }
 
     /**
-     * Calculate the LM response.
+     * Calculates the LM response.
      *
      * @param HashCredentialInterface $hash_credential The user's authentication
      *   LM hash credential.
@@ -206,7 +206,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     }
 
     /**
-     * Encode the "blob" (also known as "temp" in the official documentation).
+     * Encodes the "blob" (also known as "temp" in the official documentation).
      *
      * This value is used in calculating/generating both the NT response and the
      * base session key.
@@ -236,7 +236,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     }
 
     /**
-     * Calculate the NT "proof" string (known as "NtProofStr" in the official
+     * Calculates the NT "proof" string (known as "NtProofStr" in the official
      * documentation).
      *
      * @param HashCredentialInterface $hash_credential The user's authentication
