@@ -91,6 +91,7 @@ abstract class AbstractHasher implements HasherInterface
      * @link http://php.net/manual/en/hash.resources.php
      * @param mixed $context The context to validate.
      * @return resource The incremental hashing context.
+     * @throws UnexpectedValueException If the hash context isn't valid.
      */
     protected function validateHashContext($context)
     {

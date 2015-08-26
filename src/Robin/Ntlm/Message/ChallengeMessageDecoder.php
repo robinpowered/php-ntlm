@@ -8,6 +8,7 @@
 
 namespace Robin\Ntlm\Message;
 
+use LengthException;
 use Robin\Ntlm\Message\NegotiateFlag;
 use UnexpectedValueException;
 
@@ -130,7 +131,7 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
     public function decode($challenge_message)
     {
         if (!is_string($challenge_message) || static::MINIMUM_MESSAGE_LENGTH >= strlen($challenge_message)) {
-            throw new UnexpectedValueException(
+            throw new LengthException(
                 sprintf(
                     'Provided challenge message isn\'t a %d-byte (or longer) string',
                     static::MINIMUM_MESSAGE_LENGTH

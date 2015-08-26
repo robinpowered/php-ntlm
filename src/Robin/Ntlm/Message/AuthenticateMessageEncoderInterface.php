@@ -8,6 +8,7 @@
 
 namespace Robin\Ntlm\Message;
 
+use InvalidArgumentException;
 use Robin\Ntlm\Credential\CredentialInterface;
 
 /**
@@ -32,6 +33,7 @@ interface AuthenticateMessageEncoderInterface
      * @param ServerChallenge $server_challenge The value of a decoded NTLM
      *   server's "CHALLENGE_MESSAGE".
      * @return string The encoded message as a binary string.
+     * @throws InvalidArgumentException If the credential isn't supported.
      */
     public function encode(
         $username,

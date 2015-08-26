@@ -8,6 +8,7 @@
 
 namespace Robin\Ntlm\Crypt\Des;
 
+use InvalidArgumentException;
 use Robin\Ntlm\Crypt\CipherMode;
 
 /**
@@ -27,6 +28,9 @@ interface DesEncrypterInterface
      * @param string $initialization_vector The initialization vector used to
      *   encrypt the data in an unpredictable or reproducable fashion.
      * @return string The encrypted data as a binary string.
+     * @throws InvalidArgumentException If the provided cipher mode isn't an
+     *   available option.
+     * @throws UnexpectedValueException If the encryption fails.
      */
     public function encrypt($key, $data, $mode, $initialization_vector);
 }

@@ -8,6 +8,8 @@
 
 namespace Robin\Ntlm\Crypt\Random;
 
+use UnexpectedValueException;
+
 /**
  * An generator used to generate cryptographically secure random bytes.
  *
@@ -22,6 +24,7 @@ interface RandomByteGeneratorInterface
      *
      * @param int $size The length, in bytes, of the string to generate.
      * @return string The randomly generated binary string.
+     * @throws UnexpectedValueException If the generation fails.
      */
     public function generate($size);
 }

@@ -8,6 +8,7 @@
 
 namespace Robin\Ntlm\Message;
 
+use InvalidArgumentException;
 use Robin\Ntlm\Credential\CredentialInterface;
 use Robin\Ntlm\Credential\HashCredentialInterface;
 use Robin\Ntlm\Credential\HashType;
@@ -18,7 +19,6 @@ use Robin\Ntlm\Crypt\Hasher\HasherFactoryInterface;
 use Robin\Ntlm\Crypt\Random\RandomByteGeneratorInterface;
 use Robin\Ntlm\Encoding\EncodingConverterInterface;
 use Robin\Ntlm\Hasher\HasherInterface;
-use UnexpectedValueException;
 
 /**
  * {@inheritDoc}
@@ -191,7 +191,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
                     $calculate_lm_response = false;
                     break;
                 default:
-                    throw new UnexpectedValueException('Unsupported hash credential type');
+                    throw new InvalidArgumentException('Unsupported hash credential type');
             }
         }
 

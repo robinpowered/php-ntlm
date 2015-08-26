@@ -8,6 +8,7 @@
 
 namespace Robin\Ntlm\Crypt\Des;
 
+use InvalidArgumentException;
 use Robin\Ntlm\Crypt\CipherMode;
 use UnexpectedValueException;
 
@@ -47,7 +48,7 @@ class McryptDesEncrypter implements DesEncrypterInterface
         if (isset(self::$cipher_mode_map[$mode])) {
             $mode = self::$cipher_mode_map[$mode];
         } else {
-            throw new UnexpectedValueException('Unknown cipher mode "'. $mode .'"');
+            throw new InvalidArgumentException('Unknown cipher mode "'. $mode .'"');
         }
 
         $encrypted = mcrypt_encrypt(

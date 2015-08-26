@@ -71,6 +71,7 @@ abstract class AbstractHasherFactory
      *
      * @param string $algorithm The {@link HasherAlgorithm} to validate.
      * @return string The validated algorithm.
+     * @throws InvalidArgumentException If the algorithm isn't supported.
      */
     protected function validateSupportedAlgorithm($algorithm)
     {
