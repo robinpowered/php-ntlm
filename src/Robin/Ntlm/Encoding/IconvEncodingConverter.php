@@ -58,7 +58,8 @@ class IconvEncodingConverter implements EncodingConverterInterface
     /**
      * Gets the current internal encoding.
      *
-     * @return string
+     * @return string The encoding "name".
+     * @throws EncodingDetectionException If the detection fails.
      */
     public static function getInternalEncoding()
     {

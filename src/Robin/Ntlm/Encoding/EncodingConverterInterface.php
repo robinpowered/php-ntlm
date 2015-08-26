@@ -8,6 +8,9 @@
 
 namespace Robin\Ntlm\Encoding;
 
+use Robin\Ntlm\Encoding\Exception\EncodingConversionFailureException;
+use Robin\Ntlm\Encoding\Exception\EncodingDetectionException;
+
 /**
  * Converts between different character encodings.
  */
@@ -23,6 +26,8 @@ interface EncodingConverterInterface
      *   left as `null`, implementations may decide whether they use a default
      *   encoding or attempt to detect the encoding of the input string.
      * @return string The result string with the desired character encoding.
+     * @throws EncodingDetectionException If encoding detection fails.
+     * @throws EncodingConversionFailureException If the conversion fails.
      */
     public function convert($string, $to_encoding, $from_encoding = null);
 }

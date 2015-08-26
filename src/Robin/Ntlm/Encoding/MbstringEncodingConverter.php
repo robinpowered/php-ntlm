@@ -89,6 +89,7 @@ class MbstringEncodingConverter implements EncodingConverterInterface
      *
      * @param string $string The input string to resolve encoding from.
      * @return string The encoding "name".
+     * @throws EncodingDetectionException If the detection fails.
      */
     private function resolveInputEncoding($string)
     {
