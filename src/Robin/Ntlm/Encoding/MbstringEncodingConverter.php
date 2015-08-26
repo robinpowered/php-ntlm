@@ -95,15 +95,13 @@ class MbstringEncodingConverter implements EncodingConverterInterface
     {
         $encoding = null;
 
-        if (null === $encoding) {
-            if ($this->detect) {
-                $encoding = mb_detect_encoding($string, null, true);
-            }
+        if ($this->detect) {
+            $encoding = mb_detect_encoding($string, null, true);
+        }
 
-            // Fall back to the internal encoding
-            if (false === $encoding || null === $encoding) {
-                $encoding = mb_internal_encoding();
-            }
+        // Fall back to the internal encoding
+        if (false === $encoding || null === $encoding) {
+            $encoding = mb_internal_encoding();
         }
 
         if (false === $encoding || null === $encoding) {
