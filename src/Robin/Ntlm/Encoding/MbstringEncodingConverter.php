@@ -8,6 +8,8 @@
 
 namespace Robin\Ntlm\Encoding;
 
+use Robin\Ntlm\Encoding\Exception\EncodingConversionFailureException;
+use Robin\Ntlm\Encoding\Exception\EncodingDetectionException;
 use UnexpectedValueException;
 
 /**
@@ -73,14 +75,7 @@ class MbstringEncodingConverter implements EncodingConverterInterface
         $result = mb_convert_encoding($string, $to_encoding, $from_encoding);
 
         if (false === $result) {
-            throw new UnexpectedValueException(
-                sprintf(
-                    'Failed to convert the encoding of string "%s", from encoding "%s" and to encoding "%s"',
-                    $string,
-                    $from_encoding,
-                    $to_encoding
-                )
-            );
+            throw EncodingConversionFailureException::forStringAndEncodings($string, $from_encoding, $to_encoding);
         }
 
         return $result;
@@ -111,7 +106,7 @@ class MbstringEncodingConverter implements EncodingConverterInterface
         }
 
         if (false === $encoding || null === $encoding) {
-            throw new UnexpectedValueException('Unable to detect encoding');
+            throw EncodingDetectionException::forString($string);
         }
 
         return $encoding;

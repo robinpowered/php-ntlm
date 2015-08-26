@@ -8,6 +8,8 @@
 
 namespace Robin\Ntlm\Encoding;
 
+use Robin\Ntlm\Encoding\Exception\EncodingConversionFailureException;
+use Robin\Ntlm\Encoding\Exception\EncodingDetectionException;
 use UnexpectedValueException;
 
 /**
@@ -47,14 +49,7 @@ class IconvEncodingConverter implements EncodingConverterInterface
         $result = iconv($from_encoding, $to_encoding, $string);
 
         if (false === $result) {
-            throw new UnexpectedValueException(
-                sprintf(
-                    'Failed to convert the encoding of string "%s", from encoding "%s" and to encoding "%s"',
-                    $string,
-                    $from_encoding,
-                    $to_encoding
-                )
-            );
+            throw EncodingConversionFailureException::forStringAndEncodings($string, $from_encoding, $to_encoding);
         }
 
         return $result;
@@ -70,7 +65,7 @@ class IconvEncodingConverter implements EncodingConverterInterface
         $encoding = iconv_get_encoding(static::ICONV_INTERNAL_ENCODING_FLAG);
 
         if (false === $encoding) {
-            throw new UnexpectedValueException('Unable to detect encoding');
+            throw EncodingDetectionException::forCurrentSystem();
         }
 
         return $encoding;
