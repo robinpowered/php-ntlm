@@ -52,13 +52,7 @@ class McryptDesEncrypter implements DesEncrypterInterface
             throw new InvalidArgumentException('Unknown cipher mode "'. $mode .'"');
         }
 
-        $encrypted = mcrypt_encrypt(
-            MCRYPT_DES,
-            $key,
-            $data,
-            $mode,
-            $initialization_vector
-        );
+        $encrypted = mcrypt_encrypt(MCRYPT_DES, $key, $data, $mode, $initialization_vector);
 
         if (false === $encrypted) {
             throw CryptographicFailureException::forReasonCode(
