@@ -103,7 +103,8 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
      * @param int $negotiate_flags The negotiation flags encoded in the message.
      * @param string $lm_challenge_response The calcualted LM response.
      * @param string $nt_challenge_response The calcualted NT response.
-     * @param string $nt_domain The domain name of the NT user authenticating.
+     * @param string $target_name The "TargetName" (domain/server name) of the
+     *   NT user authenticating.
      * @param string $username The user's "username".
      * @param string $client_hostname The hostname of the client (the hostname
      *   of the machine calling this code).
@@ -114,7 +115,7 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
         $negotiate_flags,
         $lm_challenge_response,
         $nt_challenge_response,
-        $nt_domain,
+        $target_name,
         $username,
         $client_hostname,
         $session_key
@@ -128,7 +129,7 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
 
         // Convert our provided values to proper encoding
         $username = $this->encoding_converter->convert($username, $expected_encoding);
-        $nt_domain = $this->encoding_converter->convert(strtoupper($nt_domain), $expected_encoding);
+        $target_name = $this->encoding_converter->convert(strtoupper($target_name), $expected_encoding);
         $client_hostname = $this->encoding_converter->convert(strtoupper($client_hostname), $expected_encoding);
         $session_key = $this->encoding_converter->convert(strtoupper($session_key), $expected_encoding);
 
@@ -157,13 +158,13 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
         $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
         $message_position += $nt_response_length;
 
-        $domain_name_length = strlen($nt_domain);
+        $target_name_length = strlen($target_name);
 
         // Domain name fields: length; length; offset of the value from the beginning of the message
-        $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('v', $target_name_length); // 16-bit unsigned little-endian
+        $binary_string .= pack('v', $target_name_length); // 16-bit unsigned little-endian
         $binary_string .= pack('V', $message_position); // 32-bit unsigned little-endian, 1st value in the payload
-        $message_position += $domain_name_length;
+        $message_position += $target_name_length;
 
         $username_length = strlen($username);
 
@@ -194,7 +195,7 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
         // Add our payload data
         $binary_string .= $lm_challenge_response;
         $binary_string .= $nt_challenge_response;
-        $binary_string .= $nt_domain;
+        $binary_string .= $target_name;
         $binary_string .= $username;
         $binary_string .= $client_hostname;
         $binary_string .= $session_key;

@@ -138,6 +138,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $negotiate_flags = $server_challenge->getNegotiateFlags();
         $server_challenge_nonce = $server_challenge->getNonce();
         $target_info = $server_challenge->getTargetInfo();
+        $target_name = $server_challenge->getTargetName() ?: $nt_domain;
 
         // Generate a client challenge
         $client_challenge = $this->random_byte_generator->generate(static::CLIENT_CHALLENGE_LENGTH);
@@ -146,7 +147,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $binary_blob = $this->encodeBlob(new DateTime(), $client_challenge, $target_info);
 
         if ($credential->isPlaintext()) {
-            $nt_hash = $this->nt_hasher->hash($credential, $username, $nt_domain);
+            $nt_hash = $this->nt_hasher->hash($credential, $username, $target_name);
         } elseif ($credential instanceof HashCredentialInterface && HashType::NT_V2 === $credential->getType()) {
             $nt_hash = $credential;
         } else {
@@ -170,7 +171,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
             $negotiate_flags,
             $lm_challenge_response,
             $nt_challenge_response,
-            $nt_domain,
+            $target_name,
             $username,
             $client_hostname,
             $session_key
