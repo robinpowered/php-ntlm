@@ -1,5 +1,9 @@
 # PHP NTLM
 
+[![Build Status](https://img.shields.io/travis/robinpowered/php-ntlm.svg?style=flat)](https://travis-ci.org/robinpowered/php-ntlm)
+[![Quality Score](https://img.shields.io/scrutinizer/g/robinpowered/php-ntlm.svg?style=flat)](https://scrutinizer-ci.com/g/robinpowered/php-ntlm/)
+[![Latest Stable Version](https://img.shields.io/github/release/robinpowered/php-ntlm.svg?style=flat)](https://github.com/robinpowered/php-ntlm/releases)
+
 PHP-NTLM is a library that handles the encoding and decoding of messages used in the challenge-and-response flow of the
 NTLM authentication protocol, while also providing separate injectable credential hashing mechanisms to allow for a more
 secure version of a credential for storage (rather than storing passwords in "plain-text").
