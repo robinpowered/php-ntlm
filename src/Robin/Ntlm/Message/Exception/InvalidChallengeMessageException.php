@@ -95,7 +95,7 @@ class InvalidChallengeMessageException extends UnexpectedValueException
      */
 
     /**
-     * Create an exception instance for a given challenge message.
+     * Creates an exception instance for a given challenge message.
      *
      * @param string $challenge_message The invalid challenge message.
      * @param int $code The exception code.

@@ -75,7 +75,7 @@ class EncodingConversionFailureException extends UnexpectedValueException
      */
 
     /**
-     * Create an exception instance for a given string.
+     * Creates an exception instance for a given string.
      *
      * @param string $string The string that failed to convert the encoding of.
      * @param int $code The exception code.
@@ -90,7 +90,7 @@ class EncodingConversionFailureException extends UnexpectedValueException
     }
 
     /**
-     * Create an exception instance for a given string and encoding information.
+     * Creates an exception instance for a given string and encoding information.
      *
      * @param string $string The string that failed to convert the encoding of.
      * @param string $from_encoding The encoding that the string was being

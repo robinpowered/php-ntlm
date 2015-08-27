@@ -75,7 +75,7 @@ class EncodingDetectionException extends UnexpectedValueException
      */
 
     /**
-     * Create an exception instance for the current system.
+     * Creates an exception instance for the current system.
      *
      * @param int $code The exception code.
      * @param Exception|null $previous A previous exception used for chaining.
@@ -89,7 +89,7 @@ class EncodingDetectionException extends UnexpectedValueException
     }
 
     /**
-     * Create an exception instance for a given string.
+     * Creates an exception instance for a given string.
      *
      * @param string $string The string that failed to convert the encoding of.
      * @param int $code The exception code.
