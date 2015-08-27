@@ -15,7 +15,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
 ## Requirements
 
 - 64-bit PHP runtime (NTLM negotiation bit flags extend beyond the 32-bit integer size)
-- PHP `>=5.3.0`
+- PHP `>=5.4.0`
 
 
 ## Installation
@@ -45,6 +45,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
     - [x] Extended session security (NTLM2 session key) support
     - [ ] \(Add-on) Encrypted session key exchange support
 - [ ] Datagram ("connectionless") support
+- [ ] PHP 5.3.x support
 - [ ] Tests... ugh.
 
 
