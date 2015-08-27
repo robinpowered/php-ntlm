@@ -9,7 +9,7 @@
 namespace Robin\Ntlm\Message;
 
 use LengthException;
-use UnexpectedValueException;
+use Robin\Ntlm\Message\Exception\InvalidChallengeMessageException;
 
 /**
  * Decodes an NTLM "CHALLENGE_MESSAGE" to be used in the client-server
@@ -27,8 +27,8 @@ interface ChallengeMessageDecoderInterface
      *   represented as a binary string.
      * @return ServerChallenge The decoded server challenge.
      * @throws LengthException If the challenge message isn't a valid length.
-     * @throws UnexpectedValueException If the provided message doesn't match
-     *   the expected specification.
+     * @throws InvalidChallengeMessageException If the provided message doesn't
+     *   match the expected specification.
      */
     public function decode($challenge_message);
 }

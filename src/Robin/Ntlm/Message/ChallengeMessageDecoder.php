@@ -9,8 +9,8 @@
 namespace Robin\Ntlm\Message;
 
 use LengthException;
+use Robin\Ntlm\Message\Exception\InvalidChallengeMessageException;
 use Robin\Ntlm\Message\NegotiateFlag;
-use UnexpectedValueException;
 
 /**
  * {@inheritDoc}
@@ -143,13 +143,19 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
         $signature = substr($challenge_message, static::SIGNATURE_OFFSET, strlen(static::SIGNATURE));
 
         if (static::SIGNATURE !== $signature) {
-            throw new UnexpectedValueException('Invalid message signature');
+            throw InvalidChallengeMessageException::forChallengeMessage(
+                $challenge_message,
+                InvalidChallengeMessageException::CODE_FOR_INVALID_SIGNATURE
+            );
         }
 
         $message_type = unpack('V', substr($challenge_message, static::MESSAGE_TYPE_OFFSET, 4))[1];
 
         if (static::MESSAGE_TYPE !== $message_type) {
-            throw new UnexpectedValueException('Invalid message type');
+            throw InvalidChallengeMessageException::forChallengeMessage(
+                $challenge_message,
+                InvalidChallengeMessageException::CODE_FOR_INVALID_MESSAGE_TYPE
+            );
         }
 
         $target_name_length = unpack('v', substr($challenge_message, static::TARGET_NAME_LENGTH_OFFSET, 2))[1];
