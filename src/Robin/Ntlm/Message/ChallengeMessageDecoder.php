@@ -139,23 +139,21 @@ class ChallengeMessageDecoder implements ChallengeMessageDecoderInterface
             );
         }
 
-        // Grab the signature from the expected byte range
+        $invalidity_flags = null;
+
         $signature = substr($challenge_message, static::SIGNATURE_OFFSET, strlen(static::SIGNATURE));
-
-        if (static::SIGNATURE !== $signature) {
-            throw InvalidChallengeMessageException::forChallengeMessage(
-                $challenge_message,
-                InvalidChallengeMessageException::CODE_FOR_INVALID_SIGNATURE
-            );
-        }
-
         $message_type = unpack('V', substr($challenge_message, static::MESSAGE_TYPE_OFFSET, 4))[1];
 
+        if (static::SIGNATURE !== $signature) {
+            $invalidity_flags = $invalidity_flags | InvalidChallengeMessageException::CODE_FOR_INVALID_SIGNATURE;
+        }
+
         if (static::MESSAGE_TYPE !== $message_type) {
-            throw InvalidChallengeMessageException::forChallengeMessage(
-                $challenge_message,
-                InvalidChallengeMessageException::CODE_FOR_INVALID_MESSAGE_TYPE
-            );
+            $invalidity_flags = $invalidity_flags | InvalidChallengeMessageException::CODE_FOR_INVALID_MESSAGE_TYPE;
+        }
+
+        if (null !== $invalidity_flags) {
+            throw InvalidChallengeMessageException::forChallengeMessage($challenge_message, $invalidity_flags);
         }
 
         $target_name_length = unpack('v', substr($challenge_message, static::TARGET_NAME_LENGTH_OFFSET, 2))[1];
