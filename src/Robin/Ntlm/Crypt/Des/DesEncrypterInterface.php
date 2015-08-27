@@ -10,6 +10,7 @@ namespace Robin\Ntlm\Crypt\Des;
 
 use InvalidArgumentException;
 use Robin\Ntlm\Crypt\CipherMode;
+use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
 
 /**
  * An engine used to encrypt data using the DES standard algorithm.
@@ -30,7 +31,7 @@ interface DesEncrypterInterface
      * @return string The encrypted data as a binary string.
      * @throws InvalidArgumentException If the provided cipher mode isn't an
      *   available option.
-     * @throws UnexpectedValueException If the encryption fails.
+     * @throws CryptographicFailureException If the encryption fails.
      */
     public function encrypt($key, $data, $mode, $initialization_vector);
 }

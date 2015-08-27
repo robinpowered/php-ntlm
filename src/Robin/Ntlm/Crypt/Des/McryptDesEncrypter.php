@@ -10,6 +10,7 @@ namespace Robin\Ntlm\Crypt\Des;
 
 use InvalidArgumentException;
 use Robin\Ntlm\Crypt\CipherMode;
+use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
 use UnexpectedValueException;
 
 /**
@@ -60,7 +61,9 @@ class McryptDesEncrypter implements DesEncrypterInterface
         );
 
         if (false === $encrypted) {
-            throw new UnexpectedValueException('Failed to encrypt.');
+            throw CryptographicFailureException::forReasonCode(
+                CryptographicFailureException::CODE_FOR_ENCRYPTION_FAILURE
+            );
         }
 
         return $encrypted;

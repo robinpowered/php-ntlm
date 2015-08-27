@@ -8,7 +8,7 @@
 
 namespace Robin\Ntlm\Crypt\Hasher;
 
-use UnexpectedValueException;
+use InvalidArgumentException;
 
 /**
  * A cryptographic hasher implemented using PHP's built-in hashing mechanisms as
@@ -91,14 +91,14 @@ abstract class AbstractHasher implements HasherInterface
      * @link http://php.net/manual/en/hash.resources.php
      * @param mixed $context The context to validate.
      * @return resource The incremental hashing context.
-     * @throws UnexpectedValueException If the hash context isn't valid.
+     * @throws InvalidArgumentException If the hash context isn't valid.
      */
     protected function validateHashContext($context)
     {
         if (false === $context
             || !is_resource($context)
             || (is_resource($context) && static::HASH_CONTEXT_RESOURCE_TYPE !== get_resource_type($context))) {
-            throw new UnexpectedValueException(
+            throw new InvalidArgumentException(
                 'Unable to initialize hashing context. Your system might not support the supplied algorithm.'
             );
         }

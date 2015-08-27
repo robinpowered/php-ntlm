@@ -8,6 +8,7 @@
 
 namespace Robin\Ntlm\Crypt\Random;
 
+use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
 use UnexpectedValueException;
 
 /**
@@ -68,7 +69,9 @@ class McryptRandomByteGenerator implements RandomByteGeneratorInterface
         $generated = mcrypt_create_iv($size, $this->source);
 
         if (false === $generated || strlen($generated) !== $size) {
-            throw new UnexpectedValueException('Failed to generate random bytes.');
+            throw CryptographicFailureException::forReasonCode(
+                CryptographicFailureException::CODE_FOR_RANDOM_DATA_GENERATION_FAILURE
+            );
         }
 
         return $generated;
