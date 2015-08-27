@@ -56,12 +56,9 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
      * @type int[]
      */
     private static $default_flags = [
-        NegotiateFlag::NEGOTIATE_UNICODE,
         NegotiateFlag::NEGOTIATE_OEM,
         NegotiateFlag::REQUEST_TARGET,
         NegotiateFlag::NEGOTIATE_NTLM,
-        NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED,
-        NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED,
         NegotiateFlag::NEGOTIATE_ALWAYS_SIGN,
         NegotiateFlag::NEGOTIATE_EXTENDED_SESSION_SECURITY,
     ];
