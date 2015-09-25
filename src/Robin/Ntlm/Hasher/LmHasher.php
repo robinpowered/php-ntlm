@@ -13,7 +13,6 @@ use Robin\Ntlm\Credential\HashType;
 use Robin\Ntlm\Credential\Password;
 use Robin\Ntlm\Crypt\CipherMode;
 use Robin\Ntlm\Crypt\Des\DesEncrypterInterface;
-use Robin\Ntlm\Crypt\Random\RandomByteGeneratorInterface;
 
 /**
  * Uses the "LM hash" computation strategy to hash a {@link Password} credential
@@ -53,14 +52,6 @@ class LmHasher implements HasherInterface
     const PASSWORD_SLICE_LENGTH = 7;
 
     /**
-     * The length of the randomly generated binary string used for generating
-     * each piece of the resulting hash.
-     *
-     * @type int
-     */
-    const RANDOM_BINARY_STRING_LENGTH = 8;
-
-    /**
      * The constant known ASCII text to encrypt with the generated keys.
      *
      * @link https://tools.ietf.org/html/rfc2433#appendix-A.3
@@ -82,14 +73,6 @@ class LmHasher implements HasherInterface
      */
     private $des_encrypter;
 
-    /**
-     * The generator used to generate cryptographically secure random bytes to
-     * provide an initialization vector for encryption.
-     *
-     * @type RandomByteGeneratorInterface
-     */
-    private $random_byte_generator;
-
 
     /**
      * Methods
@@ -100,16 +83,10 @@ class LmHasher implements HasherInterface
      *
      * @param DesEncrypterInterface $des_encrypter The DES encryption engine
      *   used to generate the hash.
-     * @param RandomByteGeneratorInterface $random_byte_generator Used to
-     *   generate cryptographically secure random bytes to provide an
-     *   initialization vector for encryption.
      */
-    public function __construct(
-        DesEncrypterInterface $des_encrypter,
-        RandomByteGeneratorInterface $random_byte_generator
-    ) {
+    public function __construct(DesEncrypterInterface $des_encrypter)
+    {
         $this->des_encrypter = $des_encrypter;
-        $this->random_byte_generator = $random_byte_generator;
     }
 
     /**
@@ -137,7 +114,7 @@ class LmHasher implements HasherInterface
                     $half,
                     static::ENCRYPT_DATA_CONSTANT,
                     CipherMode::ECB,
-                    $this->random_byte_generator->generate(static::RANDOM_BINARY_STRING_LENGTH)
+                    '' // DES-ECB expects a 0-byte-length initialization vector
                 );
             },
             ''
