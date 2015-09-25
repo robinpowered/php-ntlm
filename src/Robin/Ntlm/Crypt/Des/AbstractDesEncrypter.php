@@ -108,6 +108,8 @@ abstract class AbstractDesEncrypter implements DesEncrypterInterface
     /**
      * Set an odd parity bit for a given byte, in least-significant position.
      *
+     * @link https://github.com/jclulow/node-smbhash/blob/edc48e2b/lib/common.js
+     *   Implementation basis.
      * @param int $byte An 8-bit byte value.
      * @return int An 8-bit byte value.
      */
