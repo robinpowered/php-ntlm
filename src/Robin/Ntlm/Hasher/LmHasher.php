@@ -13,8 +13,6 @@ use Robin\Ntlm\Credential\HashType;
 use Robin\Ntlm\Credential\Password;
 use Robin\Ntlm\Crypt\CipherMode;
 use Robin\Ntlm\Crypt\Des\DesEncrypterInterface;
-use Robin\Ntlm\Crypt\Random\RandomByteGeneratorInterface;
-use SplFixedArray;
 
 /**
  * Uses the "LM hash" computation strategy to hash a {@link Password} credential
@@ -54,14 +52,6 @@ class LmHasher implements HasherInterface
     const PASSWORD_SLICE_LENGTH = 7;
 
     /**
-     * The length of the randomly generated binary string used for generating
-     * each piece of the resulting hash.
-     *
-     * @type int
-     */
-    const RANDOM_BINARY_STRING_LENGTH = 8;
-
-    /**
      * The constant known ASCII text to encrypt with the generated keys.
      *
      * @link https://tools.ietf.org/html/rfc2433#appendix-A.3
@@ -83,14 +73,6 @@ class LmHasher implements HasherInterface
      */
     private $des_encrypter;
 
-    /**
-     * The generator used to generate cryptographically secure random bytes to
-     * provide an initialization vector for encryption.
-     *
-     * @type RandomByteGeneratorInterface
-     */
-    private $random_byte_generator;
-
 
     /**
      * Methods
@@ -101,16 +83,10 @@ class LmHasher implements HasherInterface
      *
      * @param DesEncrypterInterface $des_encrypter The DES encryption engine
      *   used to generate the hash.
-     * @param RandomByteGeneratorInterface $random_byte_generator Used to
-     *   generate cryptographically secure random bytes to provide an
-     *   initialization vector for encryption.
      */
-    public function __construct(
-        DesEncrypterInterface $des_encrypter,
-        RandomByteGeneratorInterface $random_byte_generator
-    ) {
+    public function __construct(DesEncrypterInterface $des_encrypter)
+    {
         $this->des_encrypter = $des_encrypter;
-        $this->random_byte_generator = $random_byte_generator;
     }
 
     /**
@@ -134,53 +110,16 @@ class LmHasher implements HasherInterface
         $binary_hash = array_reduce(
             $halves,
             function ($result, $half) {
-                $expanded = static::expand56BitKeyTo64BitKey($half);
-
                 return $result . $this->des_encrypter->encrypt(
-                    $expanded,
+                    $half,
                     static::ENCRYPT_DATA_CONSTANT,
                     CipherMode::ECB,
-                    $this->random_byte_generator->generate(static::RANDOM_BINARY_STRING_LENGTH)
+                    '' // DES-ECB expects a 0-byte-length initialization vector
                 );
             },
             ''
         );
 
         return Hash::fromBinaryString($binary_hash, HashType::LM);
-    }
-
-    /**
-     * Expands a 56-bit key to a full 64-bit key for DES encryption.
-     *
-     * @link http://php.net/manual/en/ref.hash.php#84587 Implementation basis.
-     * @link https://github.com/jclulow/node-smbhash/blob/edc48e2b93067/lib/common.js Inspired by Joshua Clulow's work.
-     * @param string $string_key The 56-bit key to expand
-     * @return string
-     */
-    public static function expand56BitKeyTo64BitKey($string_key)
-    {
-        $byte_array_56 = new SplFixedArray(7);
-        $byte_array_64 = new SplFixedArray(8);
-        $key_64bit = '';
-
-        // Get the byte value of each ASCII character in the string
-        for ($i = 0; $i < $byte_array_56->getSize(); $i++) {
-            $byte_array_56[$i] = isset($string_key[$i]) ? ord($string_key[$i]) : 0;
-        }
-
-        $byte_array_64[0] = $byte_array_56[0] & 254;
-        $byte_array_64[1] = ($byte_array_56[0] << 7) | ($byte_array_56[1] >> 1);
-        $byte_array_64[2] = ($byte_array_56[1] << 6) | ($byte_array_56[2] >> 2);
-        $byte_array_64[3] = ($byte_array_56[2] << 5) | ($byte_array_56[3] >> 3);
-        $byte_array_64[4] = ($byte_array_56[3] << 4) | ($byte_array_56[4] >> 4);
-        $byte_array_64[5] = ($byte_array_56[4] << 3) | ($byte_array_56[5] >> 5);
-        $byte_array_64[6] = ($byte_array_56[5] << 2) | ($byte_array_56[6] >> 6);
-        $byte_array_64[7] = $byte_array_56[6] << 1;
-
-        foreach ($byte_array_64 as $byte_val) {
-            $key_64bit .= chr($byte_val);
-        }
-
-        return $key_64bit;
     }
 }

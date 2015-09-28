@@ -18,7 +18,7 @@ use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
  *
  * @link http://php.net/openssl
  */
-class OpenSslDesEncrypter implements DesEncrypterInterface
+class OpenSslDesEncrypter extends AbstractDesEncrypter implements DesEncrypterInterface
 {
 
     /**
@@ -65,9 +65,13 @@ class OpenSslDesEncrypter implements DesEncrypterInterface
      *
      * @param bool $zero_pad Whether or not to zero-byte pad the data before
      *   encrypting for some cipher modes.
+     * @param bool $expand_and_normalize_keys Whether or not to expand and
+     *   normalize the key before encrypting.
      */
-    public function __construct($zero_pad = true)
+    public function __construct($zero_pad = true, $expand_and_normalize_keys = true)
     {
+        parent::__construct($expand_and_normalize_keys);
+
         $this->zero_pad = $zero_pad;
     }
 
@@ -83,6 +87,8 @@ class OpenSslDesEncrypter implements DesEncrypterInterface
         }
 
         $options = $this->getOpenSslEncryptionOptions();
+
+        $key = $this->processKey($key);
 
         $encrypted = openssl_encrypt($data, $mode, $key, $options, $initialization_vector);
 

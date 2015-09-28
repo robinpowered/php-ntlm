@@ -11,7 +11,6 @@ namespace Robin\Ntlm\Crypt\Des;
 use InvalidArgumentException;
 use Robin\Ntlm\Crypt\CipherMode;
 use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
-use UnexpectedValueException;
 
 /**
  * An engine used to encrypt data using the DES standard algorithm and
@@ -19,7 +18,7 @@ use UnexpectedValueException;
  *
  * @link http://php.net/mcrypt
  */
-class McryptDesEncrypter implements DesEncrypterInterface
+class McryptDesEncrypter extends AbstractDesEncrypter implements DesEncrypterInterface
 {
 
     /**
@@ -51,6 +50,8 @@ class McryptDesEncrypter implements DesEncrypterInterface
         } else {
             throw new InvalidArgumentException('Unknown cipher mode "'. $mode .'"');
         }
+
+        $key = $this->processKey($key);
 
         $encrypted = mcrypt_encrypt(MCRYPT_DES, $key, $data, $mode, $initialization_vector);
 

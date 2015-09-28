@@ -322,14 +322,11 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $binary_data = array_reduce(
             $key_blocks,
             function ($result, $key_block) use ($data) {
-                // Generate an initialization vector equal to the length of the nonce
-                $initialization_vector = $this->random_byte_generator->generate(strlen($data));
-
                 return $result . $this->des_encrypter->encrypt(
                     $key_block,
                     $data,
                     CipherMode::ECB,
-                    $initialization_vector
+                    '' // DES-ECB expects a 0-byte-length initialization vector
                 );
             },
             ''
