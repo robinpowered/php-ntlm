@@ -241,6 +241,10 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     /**
      * Calculates the LM response.
      *
+     * TODO: Remove this method as it's no longer necessary.
+     *
+     * @deprecated This logic is now a simple pass-through to
+     *   {@link self::calculateChallengeResponseData()}.
      * @param HashCredentialInterface $hash_credential The user's authentication
      *   LM hash credential.
      * @param string|null $client_challenge A randomly generated 64-bit (8-byte)
