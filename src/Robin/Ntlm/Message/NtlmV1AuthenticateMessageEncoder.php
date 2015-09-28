@@ -204,9 +204,17 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
             );
         }
 
-        if (null !== $lm_hash && $calculate_lm_response || null !== $client_challenge) {
+        // If we have a client challenge, extended session security must be negotiated
+        if (null !== $client_challenge) {
+            // Set the LM challenge response to the client challenge, null-padded to the expected length
+            $lm_challenge_response = str_pad(
+                $client_challenge,
+                static::LM_RESPONSE_LENGTH,
+                static::NULL_PAD_CHARACTER
+            );
+        } elseif (null !== $lm_hash && $calculate_lm_response) {
             $lm_challenge_response = $this->calculateLmResponse(
-                $lm_hash ?: $nt_hash,
+                $lm_hash,
                 $client_challenge,
                 $server_challenge_nonce
             );
@@ -246,19 +254,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $client_challenge = null,
         $server_challenge_nonce = null
     ) {
-        // If we have a client challenge, extended session security must be negotiated
-        if (null !== $client_challenge) {
-            // Set the LM challenge response to the client challenge, null-padded to the expected length
-            $lm_challenge_response = str_pad(
-                $client_challenge,
-                static::LM_RESPONSE_LENGTH,
-                static::NULL_PAD_CHARACTER
-            );
-        } else {
-            $lm_challenge_response = $this->calculateChallengeResponseData($hash_credential, $server_challenge_nonce);
-        }
-
-        return $lm_challenge_response;
+        return $this->calculateChallengeResponseData($hash_credential, $server_challenge_nonce);
     }
 
     /**
