@@ -196,20 +196,22 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
             }
         }
 
-        if (null !== $lm_hash && $calculate_lm_response) {
-            $lm_challenge_response = $this->calculateLmResponse(
-                $lm_hash,
-                $client_challenge,
-                $server_challenge_nonce
-            );
-        }
-
         if (null !== $nt_hash && $calculate_nt_response) {
             $nt_challenge_response = $this->calculateNtResponse(
                 $nt_hash,
                 $client_challenge,
                 $server_challenge_nonce
             );
+        }
+
+        if (null !== $lm_hash && $calculate_lm_response) {
+            $lm_challenge_response = $this->calculateLmResponse(
+                $lm_hash,
+                $client_challenge,
+                $server_challenge_nonce
+            );
+        } else {
+            $lm_challenge_response = $nt_challenge_response;
         }
 
         // TODO: Generate an encrypted random session key
