@@ -196,20 +196,32 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
             }
         }
 
-        if (null !== $lm_hash && $calculate_lm_response) {
-            $lm_challenge_response = $this->calculateLmResponse(
-                $lm_hash,
-                $client_challenge,
-                $server_challenge_nonce
-            );
-        }
-
         if (null !== $nt_hash && $calculate_nt_response) {
             $nt_challenge_response = $this->calculateNtResponse(
                 $nt_hash,
                 $client_challenge,
                 $server_challenge_nonce
             );
+        }
+
+        // If we have a client challenge, extended session security must be negotiated
+        if (null !== $client_challenge) {
+            // Set the LM challenge response to the client challenge, null-padded to the expected length
+            $lm_challenge_response = str_pad(
+                $client_challenge,
+                static::LM_RESPONSE_LENGTH,
+                static::NULL_PAD_CHARACTER
+            );
+        } elseif (null !== $lm_hash && $calculate_lm_response) {
+            $lm_challenge_response = $this->calculateLmResponse(
+                $lm_hash,
+                $client_challenge,
+                $server_challenge_nonce
+            );
+        } else {
+            // According to the spec, we're supposed to use the NT challenge response for the LM challenge response,
+            // if an LM challenge response isn't calculated
+            $lm_challenge_response = $nt_challenge_response;
         }
 
         // TODO: Generate an encrypted random session key
@@ -229,6 +241,10 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     /**
      * Calculates the LM response.
      *
+     * TODO: Remove this method as it's no longer necessary.
+     *
+     * @deprecated This logic is now a simple pass-through to
+     *   {@link self::calculateChallengeResponseData()}.
      * @param HashCredentialInterface $hash_credential The user's authentication
      *   LM hash credential.
      * @param string|null $client_challenge A randomly generated 64-bit (8-byte)
@@ -242,19 +258,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $client_challenge = null,
         $server_challenge_nonce = null
     ) {
-        // If we have a client challenge, extended session security must be negotiated
-        if (null !== $client_challenge) {
-            // Set the LM challenge response to the client challenge, null-padded to the expected length
-            $lm_challenge_response = str_pad(
-                $client_challenge,
-                static::LM_RESPONSE_LENGTH,
-                static::NULL_PAD_CHARACTER
-            );
-        } else {
-            $lm_challenge_response = $this->calculateChallengeResponseData($hash_credential, $server_challenge_nonce);
-        }
-
-        return $lm_challenge_response;
+        return $this->calculateChallengeResponseData($hash_credential, $server_challenge_nonce);
     }
 
     /**
