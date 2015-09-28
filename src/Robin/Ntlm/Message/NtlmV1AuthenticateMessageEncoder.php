@@ -204,9 +204,9 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
             );
         }
 
-        if (null !== $lm_hash && $calculate_lm_response) {
+        if (null !== $lm_hash && $calculate_lm_response || null !== $client_challenge) {
             $lm_challenge_response = $this->calculateLmResponse(
-                $lm_hash,
+                $lm_hash ?: $nt_hash,
                 $client_challenge,
                 $server_challenge_nonce
             );
