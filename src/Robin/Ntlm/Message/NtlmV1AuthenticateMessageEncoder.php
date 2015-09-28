@@ -211,6 +211,8 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
                 $server_challenge_nonce
             );
         } else {
+            // According to the spec, we're supposed to use the NT challenge response for the LM challenge response,
+            // if an LM challenge response isn't calculated
             $lm_challenge_response = $nt_challenge_response;
         }
 
