@@ -159,7 +159,7 @@ class NtlmV1AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
     ) {
         $negotiate_flags = $server_challenge->getNegotiateFlags();
         $server_challenge_nonce = $server_challenge->getNonce();
-        $target_name = $server_challenge->getTargetName() ?: $nt_domain;
+        $target_name = $nt_domain ?: $server_challenge->getTargetName();
 
         $client_challenge = null;
 

@@ -138,7 +138,7 @@ class NtlmV2AuthenticateMessageEncoder extends AbstractAuthenticateMessageEncode
         $negotiate_flags = $server_challenge->getNegotiateFlags();
         $server_challenge_nonce = $server_challenge->getNonce();
         $target_info = $server_challenge->getTargetInfo();
-        $target_name = $server_challenge->getTargetName() ?: $nt_domain;
+        $target_name = $nt_domain ?: $server_challenge->getTargetName();
 
         // Generate a client challenge
         $client_challenge = $this->random_byte_generator->generate(static::CLIENT_CHALLENGE_LENGTH);
