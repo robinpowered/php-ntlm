@@ -94,8 +94,13 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
         // Get our default negotiate flags if none were supplied
         $negotiate_flags = (null === $negotiate_flags) ? static::getDefaultNegotiateFlags() : $negotiate_flags;
 
+        $nt_domain_supplied = false;
+        $client_hostname_supplied = false;
+
         if ((NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED & $negotiate_flags)
             === NegotiateFlag::NEGOTIATE_OEM_DOMAIN_SUPPLIED) {
+            $nt_domain_supplied = true;
+
             $nt_domain = $this->encoding_converter->convert(
                 strtoupper($nt_domain),
                 static::OEM_ENCODING
@@ -107,6 +112,8 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
 
         if ((NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED & $negotiate_flags)
             === NegotiateFlag::NEGOTIATE_OEM_WORKSTATION_SUPPLIED) {
+            $client_hostname_supplied = true;
+
             $client_hostname = $this->encoding_converter->convert(
                 strtoupper($client_hostname),
                 static::OEM_ENCODING
@@ -121,6 +128,24 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
         $domain_name_length = strlen($nt_domain);
         $hostname_length = strlen($client_hostname);
 
+        /**
+         * Determine the payload offsets of the domain name and hostname
+         *
+         * The specification says that these offsets should be set to valid
+         * locations even if the negotation flags don't contain the flags
+         * denoting their inclusion, however some NTLM servers seem to throw a
+         * bit of a fit if the offsets are set to non-zero values when the flags
+         * don't denote their inclusion.
+         *
+         * So yea, we're breaking spec here to appease some seemingly old or
+         * improper implementations. cURL does the same here.
+         *
+         * @link https://msdn.microsoft.com/en-us/library/cc236641.aspx
+         * @link https://github.com/bagder/curl/blob/curl-7_46_0/lib/curl_ntlm_msgs.c#L364-L370
+         */
+        $domain_name_offset = $nt_domain_supplied ? $payload_offset : 0;
+        $hostname_offset = $client_hostname_supplied ? ($payload_offset + $domain_name_length) : 0;
+
         // Prepare a binary string to be returned
         $binary_string = '';
 
@@ -132,12 +157,12 @@ class NegotiateMessageEncoder implements NegotiateMessageEncoderInterface
         // Domain name fields: length; length; offset of the domain value from the beginning of the message
         $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
         $binary_string .= pack('v', $domain_name_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $payload_offset); // 32-bit unsigned little-endian, 1st value in the payload
+        $binary_string .= pack('V', $domain_name_offset); // 32-bit unsigned little-endian, 1st value in the payload
 
         // Hostname fields: length; length; offset of the hostname value from the beginning of the message
         $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
         $binary_string .= pack('v', $hostname_length); // 16-bit unsigned little-endian
-        $binary_string .= pack('V', $payload_offset + $domain_name_length); // 32-bit unsigned little-endian, 2nd value
+        $binary_string .= pack('V', $hostname_offset); // 32-bit unsigned little-endian, 2nd value
 
         // NOTE: Omitting the version data here. It's unnecessary.
 
