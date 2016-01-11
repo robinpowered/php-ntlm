@@ -126,7 +126,7 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
          * @link https://msdn.microsoft.com/en-us/library/windows/desktop/aa380525(v=vs.85).aspx
          * @link http://davenport.sourceforge.net/ntlm.html#nameVariations
          */
-        if (strpos($username, static::USER_PRINCIPAL_NAME_SEPARATOR)) {
+        if (false !== strpos($username, static::USER_PRINCIPAL_NAME_SEPARATOR)) {
             $target_name = '';
         }
 
