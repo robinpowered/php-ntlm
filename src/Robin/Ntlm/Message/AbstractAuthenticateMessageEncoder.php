@@ -69,6 +69,13 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
      */
     const LM_RESPONSE_LENGTH = 24;
 
+    /**
+     * The separator used in usernames in the UPN (User Principal Name) format.
+     *
+     * @type string
+     */
+    const USER_PRINCIPAL_NAME_SEPARATOR = '@';
+
 
     /**
      * Properties
@@ -95,6 +102,35 @@ abstract class AbstractAuthenticateMessageEncoder implements AuthenticateMessage
     protected function __construct(EncodingConverterInterface $encoding_converter)
     {
         $this->encoding_converter = $encoding_converter;
+    }
+
+    /**
+     * Identifies the "TargetName" of the intended authentication by inspecting
+     * some of the authentication details.
+     *
+     * @param string $username The user's "username".
+     * @param string $nt_domain The domain name of the NT user authenticating.
+     * @param ServerChallenge $server_challenge The value of a decoded NTLM
+     *   server's "CHALLENGE_MESSAGE".
+     * @return string The identified "TargetName" (domain/server name) of the
+     *   NT user authenticating.
+     */
+    public function identifyTargetName($username, $nt_domain, ServerChallenge $server_challenge)
+    {
+        // If a domain name wasn't supplied, fall back to the server challenge's supplied value
+        $target_name = $nt_domain ?: $server_challenge->getTargetName();
+
+        /**
+         * If the username is in the "UPN" (Kerberos) format, the target name should be empty
+         *
+         * @link https://msdn.microsoft.com/en-us/library/windows/desktop/aa380525(v=vs.85).aspx
+         * @link http://davenport.sourceforge.net/ntlm.html#nameVariations
+         */
+        if (strpos($username, static::USER_PRINCIPAL_NAME_SEPARATOR)) {
+            $target_name = '';
+        }
+
+        return $target_name;
     }
 
     /**
