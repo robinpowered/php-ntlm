@@ -30,7 +30,7 @@
         "squizlabs/php_codesniffer": "^2.3",
         "paragonie/random_compat": "^2.0"
     },
-    "suggests": {
+    "suggest": {
         "paragonie/random_compat": "Allows for more cryptographically secure random data generation during the NTLM hashing process"
     },
     "autoload": {
