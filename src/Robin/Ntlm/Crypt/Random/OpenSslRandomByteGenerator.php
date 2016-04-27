@@ -2,7 +2,7 @@
 /**
  * Robin NTLM
  *
- * @copyright 2015 Robin Powered, Inc.
+ * @copyright 2016 Robin Powered, Inc.
  * @link https://robinpowered.com/
  */
 
