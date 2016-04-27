@@ -16,6 +16,8 @@ use UnexpectedValueException;
  * "mcrypt" extension.
  *
  * @link http://php.net/mcrypt
+ * @deprectated NOTE! This implementation is deprecated, as the mcrypt library
+ *   is abandoned. More info: https://github.com/robinpowered/php-ntlm/pull/1
  */
 class McryptRandomByteGenerator implements RandomByteGeneratorInterface
 {
@@ -63,9 +65,17 @@ class McryptRandomByteGenerator implements RandomByteGeneratorInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @deprectated NOTE! This implementation is deprecated, as the mcrypt
+     *   library is abandoned.
      */
     public function generate($size)
     {
+        trigger_error(
+            'This implementation is deprecated, as the mcrypt library is abandoned',
+            E_USER_DEPRECATED
+        );
+
         $generated = mcrypt_create_iv($size, $this->source);
 
         if (false === $generated || strlen($generated) !== $size) {
