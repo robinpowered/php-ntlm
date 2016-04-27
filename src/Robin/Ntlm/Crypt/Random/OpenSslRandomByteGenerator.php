@@ -15,6 +15,8 @@ use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
  * "openssl" extension.
  *
  * @link http://php.net/openssl
+ * @deprectated NOTE! This implementation is deprecated, as it's been found to
+ *   be insecure. More info: https://github.com/robinpowered/php-ntlm/issues/7
  */
 class OpenSslRandomByteGenerator implements RandomByteGeneratorInterface
 {
@@ -25,9 +27,17 @@ class OpenSslRandomByteGenerator implements RandomByteGeneratorInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @deprectated NOTE! This implementation is deprecated, as it's been found
+     *   to be insecure.
      */
     public function generate($size)
     {
+        trigger_error(
+            'This implementation is deprecated, as it can be insecure in some circumstances',
+            E_USER_DEPRECATED
+        );
+
         $generated = openssl_random_pseudo_bytes($size, $strong);
 
         if (false === $generated || strlen($generated) !== $size || false === $strong) {
