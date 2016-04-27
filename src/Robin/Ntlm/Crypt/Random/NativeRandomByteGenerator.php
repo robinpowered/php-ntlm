@@ -8,6 +8,7 @@
 
 namespace Robin\Ntlm\Crypt\Random;
 
+use Error;
 use Exception;
 use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
 
