@@ -19,7 +19,7 @@ before_install:
 
 install:
   - composer self-update
-  - composer install --prefer-dist
+  - make install-deps
 
 script:
   - composer validate
