@@ -17,6 +17,7 @@ use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
  * @link http://php.net/openssl
  * @deprectated NOTE! This implementation is deprecated, as it's been found to
  *   be insecure. More info: https://github.com/robinpowered/php-ntlm/issues/7
+ * @todo Remove this implementation in a future version.
  */
 class OpenSslRandomByteGenerator implements RandomByteGeneratorInterface
 {
