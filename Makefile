@@ -1,7 +1,17 @@
+# Define directories
+VENDOR_DIR ?= $(CURDIR)/vendor
+
+
+# Global/default target
 all: install test lint check-style
 
-install:
-	composer install --prefer-dist
+$(VENDOR_DIR):
+	composer install --no-interaction --prefer-dist
+
+install-deps: $(VENDOR_DIR)
+
+clean-deps:
+	rm -rf $(VENDOR_DIR)
 
 test:
 	./vendor/bin/phpunit
@@ -18,3 +28,5 @@ lint:
 
 check-style:
 	./vendor/bin/phpcs --standard=PSR2 --encoding=utf-8 -p src/ tests/
+
+.PHONY: all install-deps clean-deps test test-with-coverage test-with-coverage-clover lint check-style

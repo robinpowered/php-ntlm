@@ -5,6 +5,7 @@ php:
   - 5.4
   - 5.5
   - 5.6
+  - 7.0
   - nightly
   - hhvm
 
@@ -19,7 +20,7 @@ before_install:
 
 install:
   - composer self-update
-  - composer install --prefer-dist
+  - make install-deps
 
 script:
   - composer validate
