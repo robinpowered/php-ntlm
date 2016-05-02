@@ -9,16 +9,16 @@
 namespace Robin\Ntlm\Crypt\Random;
 
 use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
-use UnexpectedValueException;
 
 /**
  * A cryptographically secure random byte generator implemented using the PHP
  * "mcrypt" extension.
  *
  * @link http://php.net/mcrypt
- * @deprectated NOTE! This implementation is deprecated, as the mcrypt library
- *   is abandoned. More info: https://github.com/robinpowered/php-ntlm/pull/1
- * @todo Remove this implementation in a future version.
+ * @deprecated This implementation is deprecated, as the mcrypt library
+ *   is abandoned. Use {@link NativeRandomByteGenerator} instead.
+ *   More info: https://github.com/robinpowered/php-ntlm/pull/1
+ * @todo Mcrypt is abandoned and this should be removed in a future version.
  */
 class McryptRandomByteGenerator implements RandomByteGeneratorInterface
 {
@@ -67,8 +67,8 @@ class McryptRandomByteGenerator implements RandomByteGeneratorInterface
     /**
      * {@inheritDoc}
      *
-     * @deprectated NOTE! This implementation is deprecated, as the mcrypt
-     *   library is abandoned.
+     * @deprecated This implementation is deprecated, as the mcrypt
+     *   library is abandoned. Use {@link NativeRandomByteGenerator} instead.
      */
     public function generate($size)
     {
