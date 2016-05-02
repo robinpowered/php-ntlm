@@ -15,9 +15,11 @@ use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
  * "openssl" extension.
  *
  * @link http://php.net/openssl
- * @deprecated Insecure! This implementation is deprecated, as it's been found to
- *   be insecure. More info: https://github.com/robinpowered/php-ntlm/issues/7
- * @todo Remove this implementation in a future version.
+ * @deprecated This implementation is deprecated, as it's been found to
+ *   be insecure. Use {@link NativeRandomByteGenerator} instead.
+ *   More info: https://github.com/robinpowered/php-ntlm/issues/7
+ * @todo This random byte generator is insecure due to an issue with
+ *   `openssl_random_pseudo_bytes`. It should be removed in a future version.
  */
 class OpenSslRandomByteGenerator implements RandomByteGeneratorInterface
 {
@@ -29,8 +31,8 @@ class OpenSslRandomByteGenerator implements RandomByteGeneratorInterface
     /**
      * {@inheritDoc}
      *
-     * @deprecated Insecure! This implementation is deprecated, as it's been found
-     *   to be insecure.
+     * @deprecated This implementation is deprecated, as it's been found
+     *   to be insecure. Use {@link RandomByteGeneratorInterface} instead.
      */
     public function generate($size)
     {
