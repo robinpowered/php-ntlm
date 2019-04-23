@@ -2,13 +2,15 @@
 /**
  * Robin NTLM
  *
- * @copyright 2015 Robin Powered, Inc.
+ * @copyright 2019 Robin Powered, Inc.
  * @link https://robinpowered.com/
  */
 
+declare(strict_types=1);
+
 namespace Robin\Ntlm\Crypt\Hasher;
 
-use InvalidArgumentException;
+use HashContext;
 
 /**
  * A cryptographic hasher implemented using PHP's built-in hashing mechanisms as
@@ -18,50 +20,27 @@ use InvalidArgumentException;
  */
 abstract class AbstractHasher implements HasherInterface
 {
-
-    /**
-     * Constants
-     */
-
-    /**
-     * The "resource" type of a PHP hash context.
-     *
-     * @type string
-     */
-    const HASH_CONTEXT_RESOURCE_TYPE = 'Hash Context';
-
-
-    /**
-     * Properties
-     */
-
     /**
      * The incremental hashing context.
      *
-     * @link http://php.net/manual/en/hash.resources.php
-     * @type resource
+     * @type HashContext
      */
     private $context;
-
-
-    /**
-     * Methods
-     */
 
     /**
      * Constructor
      *
-     * @param resource $context The incremental hashing context.
+     * @param HashContext $context The incremental hashing context.
      */
-    protected function __construct($context)
+    protected function __construct(HashContext $context)
     {
-        $this->context = $this->validateHashContext($context);
+        $this->context = $context;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function update($data)
+    public function update(string $data): HasherInterface
     {
         hash_update($this->context, $data);
 
@@ -71,7 +50,7 @@ abstract class AbstractHasher implements HasherInterface
     /**
      * {@inheritDoc}
      */
-    public function digest()
+    public function digest(): string
     {
         // Copy the context so we can keep using the hasher
         $context_copy = hash_copy($this->context);
@@ -83,26 +62,5 @@ abstract class AbstractHasher implements HasherInterface
         $this->context = $context_copy;
 
         return $digest;
-    }
-
-    /**
-     * Validates a given incremental hashing context.
-     *
-     * @link http://php.net/manual/en/hash.resources.php
-     * @param mixed $context The context to validate.
-     * @return resource The incremental hashing context.
-     * @throws InvalidArgumentException If the hash context isn't valid.
-     */
-    protected function validateHashContext($context)
-    {
-        if (false === $context
-            || !is_resource($context)
-            || (is_resource($context) && static::HASH_CONTEXT_RESOURCE_TYPE !== get_resource_type($context))) {
-            throw new InvalidArgumentException(
-                'Unable to initialize hashing context. Your system might not support the supplied algorithm.'
-            );
-        }
-
-        return $context;
     }
 }

@@ -2,9 +2,11 @@
 /**
  * Robin NTLM
  *
- * @copyright 2015 Robin Powered, Inc.
+ * @copyright 2019 Robin Powered, Inc.
  * @link https://robinpowered.com/
  */
+
+declare(strict_types=1);
 
 namespace Robin\Ntlm\Crypt\Hasher;
 
@@ -23,12 +25,12 @@ interface HasherInterface
      * @param string $data The data to add.
      * @return $this
      */
-    public function update($data);
+    public function update(string $data): HasherInterface;
 
     /**
      * Calculates the digest of the message.
      *
      * @return string The message digest as a binary string.
      */
-    public function digest();
+    public function digest(): string;
 }
