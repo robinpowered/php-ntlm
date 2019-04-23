@@ -2,6 +2,7 @@ sudo: false
 
 language: php
 php:
+  - 7.1
   - 7.2
   - nightly
   - hhvm
@@ -14,7 +15,7 @@ matrix:
 
 before_install:
    - export ALLOW_FAILURE=1; if [ "$TRAVIS_PHP_VERSION" != "hhvm" ] && [ "$TRAVIS_PHP_VERSION" != "nightly" ]; then export ALLOW_FAILURE=0; fi
-   - pecl install mcrypt-1.0.2
+   - if [ "$TRAVIS_PHP_VERSION" == "7.2" ]; then yes '' | pecl install mcrypt-1.0.2; fi
 
 install:
   - composer self-update

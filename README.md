@@ -19,7 +19,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
 ## Requirements
 
 - 64-bit PHP runtime (NTLM negotiation bit flags extend beyond the 32-bit integer size)
-- PHP `>=7.2.0`
+- PHP `>=7.1.0`
 
 
 ## Installation
