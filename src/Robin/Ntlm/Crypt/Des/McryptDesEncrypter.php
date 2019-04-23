@@ -2,7 +2,7 @@
 /**
  * Robin NTLM
  *
- * @copyright 2015 Robin Powered, Inc.
+ * @copyright 2019 Robin Powered, Inc.
  * @link https://robinpowered.com/
  */
 
@@ -13,6 +13,10 @@ use Robin\Ntlm\Crypt\CipherMode;
 use Robin\Ntlm\Crypt\Exception\CryptographicFailureException;
 
 /**
+ * @deprecated Mcrypt has been deprecated from the core PHP library. Use
+ * {@see OpenSslDesEncrypter} as an alternative.
+ * @link https://php.net/manual/en/migration72.other-changes.php#migration72.other-changes.mcrypt
+ *
  * An engine used to encrypt data using the DES standard algorithm and
  * implemented using the PHP "mcrypt" extension.
  *
