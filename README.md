@@ -19,7 +19,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
 ## Requirements
 
 - 64-bit PHP runtime (NTLM negotiation bit flags extend beyond the 32-bit integer size)
-- PHP `>=5.4.0`
+- PHP `>=7.1.0`
 
 
 ## Installation
@@ -27,6 +27,71 @@ secure version of a credential for storage (rather than storing passwords in "pl
 1. [Get Composer][composer-website]
 2. Add `robinpowered/php-ntlm` to your Composer required dependencies: `composer require robinpowered/php-ntlm`
 3. Include the [Composer autoloader][composer-documentation-autoloading]
+
+
+## Example Usage
+
+```php
+// Using Guzzle
+$client = new Client();
+$request = new Request('get', 'https://my-exchange-url.com');
+$user_name = 'user_name';
+$password = 'password';
+$target_name = 'target_name';
+$host_name = 'host_name';
+
+$encoding_converter = new MbstringEncodingConverter();
+$random_byte_generator = new NativeRandomByteGenerator();
+$hasher_factory = HasherFactory::createWithDetectedSupportedAlgorithms();
+
+$negotiate_message_encoder = new NegotiateMessageEncoder($encoding_converter);
+$challenge_message_decoder = new ChallengeMessageDecoder();
+
+$keyed_hasher_factory = KeyedHasherFactory::createWithDetectedSupportedAlgorithms();
+
+$nt1_hasher = new NtV1Hasher($hasher_factory, $encoding_converter);
+$nt2_hasher = new NtV2Hasher($nt1_hasher, $keyed_hasher_factory, $encoding_converter);
+
+$authenticate_message_encoder = new NtlmV2AuthenticateMessageEncoder(
+    $encoding_converter,
+    $nt2_hasher,
+    $random_byte_generator,
+    $keyed_hasher_factory
+);
+
+$negotiate_message = $negotiate_message_encoder->encode(
+    $target_name,
+    $host_name
+);
+
+// Send negotiate message
+$request->setHeader('Authorization', sprintf('NTLM %s', base64_encode($negotiate_message)));
+$response = $client->send($request);
+
+// Decode returned challenge message
+$authenticate_headers = $response->getHeaderAsArray('WWW-Authenticate');
+foreach ($authenticate_headers as $header_string) {
+    $ntlm_matches = preg_match('/NTLM( (.*))?/', $header_string, $ntlm_header);
+
+    if (0 < $ntlm_matches && isset($ntlm_header[2])) {
+        $raw_server_challenge = base64_decode($ntlm_header[2]);
+        break;
+    }
+}
+$server_challenge = $challenge_message_decoder->decode($raw_server_challenge);
+
+$authenticate_message = $authenticate_message_encoder->encode(
+    $user_name,
+    $target_name,
+    $host_name,
+    new Password($password),
+    $server_challenge
+);
+
+// Send authenticate message
+$request->setHeader('Authorization', sprintf('NTLM %s', base64_encode($authenticate_message)));
+$client->send($request);
+```
 
 
 ## TODO
@@ -49,8 +114,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
     - [x] Extended session security (NTLM2 session key) support
     - [ ] \(Add-on) Encrypted session key exchange support
 - [ ] Datagram ("connectionless") support
-- [ ] PHP 5.3.x support
-- [ ] Tests... ugh.
+- [ ] Tests
 
 
 ## License
@@ -59,7 +123,7 @@ secure version of a credential for storage (rather than storing passwords in "pl
 
 --------------------------------------------------------------------------------
 
-Copyright 2015 Robin Powered, Inc.
+Copyright 2019 Robin Powered, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
