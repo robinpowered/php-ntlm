@@ -16,10 +16,9 @@
         "source": "https://github.com/robinpowered/php-ntlm"
     },
     "require": {
-        "php-64bit": ">=7.1.0"
+        "php-64bit": ">=8.3.0"
     },
     "require-dev": {
-        "ext-mcrypt": "*",
         "ext-hash": "*",
         "ext-mbstring": "*",
         "ext-iconv": "*",
