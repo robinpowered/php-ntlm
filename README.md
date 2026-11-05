@@ -1,6 +1,6 @@
 # PHP NTLM
 
-[![Build Status](https://img.shields.io/travis/robinpowered/php-ntlm.svg?style=flat)](https://travis-ci.org/robinpowered/php-ntlm)
+[![Build Status](https://github.com/robinpowered/php-ntlm/actions/workflows/build.yml/badge.svg)](https://github.com/robinpowered/php-ntlm/actions/workflows/build.yml)
 [![Quality Score](https://img.shields.io/scrutinizer/g/robinpowered/php-ntlm.svg?style=flat)](https://scrutinizer-ci.com/g/robinpowered/php-ntlm/)
 [![Latest Stable Version](https://img.shields.io/github/release/robinpowered/php-ntlm.svg?style=flat)](https://github.com/robinpowered/php-ntlm/releases)
 
