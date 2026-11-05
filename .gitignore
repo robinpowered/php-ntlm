@@ -9,5 +9,5 @@
 /report/
 /coverage.xml
 
-# PHPUnit result cache
-/.phpunit.result.cache
+# PHPUnit cache directory
+/.phpunit.cache/

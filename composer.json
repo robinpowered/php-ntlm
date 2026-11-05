@@ -24,7 +24,7 @@
         "ext-iconv": "*",
         "ext-spl": "*",
         "ext-openssl": "*",
-        "phpunit/phpunit": "^8.5.52",
+        "phpunit/phpunit": "^12",
         "squizlabs/php_codesniffer": "^3.13.6",
         "paragonie/random_compat": "^2.0"
     },
