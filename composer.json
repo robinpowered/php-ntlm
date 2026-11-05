@@ -25,11 +25,7 @@
         "ext-spl": "*",
         "ext-openssl": "*",
         "phpunit/phpunit": "^12",
-        "squizlabs/php_codesniffer": "^3.13.6",
-        "paragonie/random_compat": "^2.0"
-    },
-    "suggest": {
-        "paragonie/random_compat": "Allows for more cryptographically secure random data generation during the NTLM hashing process"
+        "squizlabs/php_codesniffer": "^3.13.6"
     },
     "autoload": {
         "psr-4": {"Robin\\Ntlm\\": "src/Robin/Ntlm/"}
