@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, iconv, openssl
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Audit dependencies
+        run: composer audit
+
+      - name: Lint
+        run: make lint
+
+      - name: Check style
+        run: make check-style
+
+      - name: Run tests
+        run: make test
