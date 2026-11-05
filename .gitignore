@@ -8,3 +8,6 @@
 # Auto-generated code coverage report
 /report/
 /coverage.xml
+
+# PHPUnit cache directory
+/.phpunit.cache/
